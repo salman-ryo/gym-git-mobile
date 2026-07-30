@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { WorkoutType, WeeklyPlan } from '@/lib/types';
 import { SlidersHorizontal, Settings2 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface FilterBarProps {
   activeFilter: WorkoutType | 'All';
@@ -26,7 +27,12 @@ export default function FilterBar({
   extraHistoricalTypes.forEach((cat) => displayFilterItems.push({ label: cat, isExtra: true }));
 
   return (
-    <View style={{ backgroundColor: '#18181b', padding: 12, borderRadius: 16, marginBottom: 16, borderWidth: 1, borderColor: '#27272a' }}>
+    <LinearGradient
+      colors={['#18181b', '#0f172a']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ padding: 14, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: '#27272a' }}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <SlidersHorizontal size={14} color="#10b981" />
@@ -43,26 +49,44 @@ export default function FilterBar({
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {displayFilterItems.map((item) => {
           const isActive = activeFilter === item.label;
+
+          if (isActive) {
+            return (
+              <TouchableOpacity key={item.label} onPress={() => onFilterChange(item.label)}>
+                <LinearGradient
+                  colors={['#10b981', '#059669']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10 }}
+                >
+                  <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>
+                    {item.label} {item.isExtra ? '(Past)' : ''}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            );
+          }
+
           return (
             <TouchableOpacity
               key={item.label}
               onPress={() => onFilterChange(item.label)}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 14,
+                paddingVertical: 7,
                 borderRadius: 10,
-                backgroundColor: isActive ? '#10b981' : item.isExtra ? 'rgba(245,158,11,0.15)' : '#09090b',
+                backgroundColor: item.isExtra ? 'rgba(245,158,11,0.15)' : '#09090b',
                 borderWidth: 1,
-                borderColor: isActive ? '#10b981' : item.isExtra ? '#f59e0b' : '#27272a',
+                borderColor: item.isExtra ? '#f59e0b' : '#27272a',
               }}
             >
-              <Text style={{ color: isActive ? '#09090b' : item.isExtra ? '#f59e0b' : '#a1a1aa', fontWeight: '700', fontSize: 12 }}>
+              <Text style={{ color: item.isExtra ? '#f59e0b' : '#a1a1aa', fontWeight: '700', fontSize: 12 }}>
                 {item.label} {item.isExtra ? '(Past)' : ''}
               </Text>
             </TouchableOpacity>
           );
         })}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 }

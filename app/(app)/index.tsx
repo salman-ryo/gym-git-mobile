@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
+import { ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import FilterBar from '@/components/FilterBar';
@@ -14,6 +14,7 @@ import { fetchGymLogs, fetchDashboardStats, saveGymLog, deleteGymLog } from '@/l
 import { formatDateKey } from '@/lib/scientific-streak';
 import { GymLog, Stats, WorkoutType } from '@/lib/types';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function DashboardScreen() {
   const { user, updateUserPlan } = useAuth();
@@ -97,7 +98,7 @@ export default function DashboardScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#09090b' }}>
+    <LinearGradient colors={['#09090b', '#0d1912', '#09090b']} style={{ flex: 1 }}>
       <Header currentStreak={stats?.currentStreak || 0} />
 
       <ScrollView
@@ -163,6 +164,6 @@ export default function DashboardScreen() {
         }}
         preventClose={needsPlanSelection}
       />
-    </View>
+    </LinearGradient>
   );
 }

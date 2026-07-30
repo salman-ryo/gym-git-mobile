@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { GymLog, TimeframeView, WorkoutType } from '@/lib/types';
 import { formatDateKey } from '@/lib/scientific-streak';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface ContributionGraphProps {
   logs: GymLog[];
@@ -56,21 +57,42 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
   }, [logMap]);
 
   return (
-    <View style={{ backgroundColor: '#18181b', padding: 16, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: '#27272a' }}>
+    <LinearGradient
+      colors={['#18181b', '#0d1f18']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ padding: 16, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(16,185,129,0.2)' }}
+    >
       {/* Header View Switcher */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <Text style={{ color: '#f4f4f5', fontWeight: '800', fontSize: 15 }}>Gym Activity Grid</Text>
 
-        <View style={{ flexDirection: 'row', backgroundColor: '#09090b', padding: 2, borderRadius: 10 }}>
-          <TouchableOpacity onPress={() => setTimeframe('year')} style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: timeframe === 'year' ? '#10b981' : 'transparent' }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: timeframe === 'year' ? '#09090b' : '#a1a1aa' }}>365d</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setTimeframe('month')} style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: timeframe === 'month' ? '#10b981' : 'transparent' }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: timeframe === 'month' ? '#09090b' : '#a1a1aa' }}>Month</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setTimeframe('week')} style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: timeframe === 'week' ? '#10b981' : 'transparent' }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: timeframe === 'week' ? '#09090b' : '#a1a1aa' }}>Week</Text>
-          </TouchableOpacity>
+        <View style={{ flexDirection: 'row', backgroundColor: '#09090b', padding: 3, borderRadius: 12, borderWidth: 1, borderColor: '#27272a' }}>
+          {(['year', 'month', 'week'] as TimeframeView[]).map((mode) => {
+            const isActive = timeframe === mode;
+            const label = mode === 'year' ? '365d' : mode === 'month' ? 'Month' : 'Week';
+
+            if (isActive) {
+              return (
+                <TouchableOpacity key={mode} onPress={() => setTimeframe(mode)}>
+                  <LinearGradient
+                    colors={['#10b981', '#059669']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}
+                  >
+                    <Text style={{ fontSize: 11, fontWeight: '800', color: '#09090b' }}>{label}</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              );
+            }
+
+            return (
+              <TouchableOpacity key={mode} onPress={() => setTimeframe(mode)} style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: '#a1a1aa' }}>{label}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 
@@ -117,6 +139,6 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
           <Text style={{ color: '#a1a1aa', fontSize: 11, marginTop: 4 }}>Track your rolling weekly workout targets</Text>
         </View>
       )}
-    </View>
+    </LinearGradient>
   );
 }

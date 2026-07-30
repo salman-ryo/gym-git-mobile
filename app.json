@@ -3,14 +3,26 @@
     "name": "Gym-Git",
     "slug": "gymgit-mobile",
     "version": "1.0.0",
+    "description": "Commit your workouts like code - Scientific fitness tracking & GitHub-style activity heatmaps.",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "gymgit",
     "userInterfaceStyle": "dark",
+    "primaryColor": "#10b981",
+    "backgroundColor": "#09090b",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#09090b"
+    },
     "ios": {
-      "icon": "./assets/expo.icon"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.gymgit.mobile",
+      "userInterfaceStyle": "dark"
     },
     "android": {
+      "package": "com.gymgit.mobile",
+      "backgroundColor": "#09090b",
       "adaptiveIcon": {
         "backgroundColor": "#09090b",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -30,7 +42,7 @@
         {
           "backgroundColor": "#09090b",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 120
         }
       ],
       "expo-web-browser",

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput } from 'react-native';
 import { WorkoutType } from '@/lib/types';
 import { Dumbbell } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface DailyCheckInModalProps {
   dateStr: string;
@@ -27,26 +28,39 @@ export default function DailyCheckInModal({
 
   return (
     <Modal visible={isOpen} transparent animationType="slide">
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', padding: 20 }}>
-        <View style={{ backgroundColor: '#18181b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#27272a' }}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 }}>
+        <LinearGradient
+          colors={['#18181b', '#0f291e']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' }}
+        >
           {!answeredYes ? (
             <View style={{ alignItems: 'center' }}>
-              <Dumbbell size={36} color="#10b981" style={{ marginBottom: 12 }} />
+              <LinearGradient
+                colors={['#10b981', '#059669']}
+                style={{ width: 56, height: 56, borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}
+              >
+                <Dumbbell size={30} color="#09090b" />
+              </LinearGradient>
               <Text style={{ color: '#f4f4f5', fontSize: 22, fontWeight: '900', textAlign: 'center' }}>Did you hit the gym today?</Text>
               <Text style={{ color: '#a1a1aa', fontSize: 13, marginTop: 4, marginBottom: 24, textAlign: 'center' }}>{dateStr}</Text>
 
               <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
-                <TouchableOpacity onPress={() => setAnsweredYes(true)} style={{ flex: 1, backgroundColor: '#10b981', paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}>
-                  <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Yes!</Text>
+                <TouchableOpacity onPress={() => setAnsweredYes(true)} style={{ flex: 1, borderRadius: 14, overflow: 'hidden' }}>
+                  <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
+                    <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Yes!</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onCheckInNo} style={{ flex: 1, backgroundColor: '#27272a', paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}>
+
+                <TouchableOpacity onPress={onCheckInNo} style={{ flex: 1, backgroundColor: '#27272a', paddingVertical: 14, borderRadius: 14, alignItems: 'center', borderWidth: 1, borderColor: '#3f3f46' }}>
                   <Text style={{ color: '#f4f4f5', fontWeight: '700', fontSize: 15 }}>Rest Day</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ) : (
             <View>
-              <Text style={{ color: '#f4f4f5', fontSize: 18, fontWeight: '800', marginBottom: 16 }}>Session Details</Text>
+              <Text style={{ color: '#f4f4f5', fontSize: 20, fontWeight: '800', marginBottom: 16 }}>Session Details</Text>
 
               {/* Hours Presets */}
               <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '600', marginBottom: 8 }}>Duration (Hours)</Text>
@@ -55,9 +69,17 @@ export default function DailyCheckInModal({
                   <TouchableOpacity
                     key={h}
                     onPress={() => setHours(h)}
-                    style={{ flex: 1, paddingVertical: 8, borderRadius: 8, backgroundColor: hours === h ? '#10b981' : '#09090b', alignItems: 'center' }}
+                    style={{ flex: 1, borderRadius: 8, overflow: 'hidden' }}
                   >
-                    <Text style={{ color: hours === h ? '#09090b' : '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{h}h</Text>
+                    {hours === h ? (
+                      <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 8, alignItems: 'center' }}>
+                        <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>{h}h</Text>
+                      </LinearGradient>
+                    ) : (
+                      <View style={{ paddingVertical: 8, backgroundColor: '#09090b', alignItems: 'center', borderWidth: 1, borderColor: '#27272a', borderRadius: 8 }}>
+                        <Text style={{ color: '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{h}h</Text>
+                      </View>
+                    )}
                   </TouchableOpacity>
                 ))}
               </View>
@@ -69,9 +91,17 @@ export default function DailyCheckInModal({
                   <TouchableOpacity
                     key={cat}
                     onPress={() => setWorkoutType(cat)}
-                    style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: workoutType === cat ? '#10b981' : '#09090b' }}
+                    style={{ borderRadius: 8, overflow: 'hidden' }}
                   >
-                    <Text style={{ color: workoutType === cat ? '#09090b' : '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{cat}</Text>
+                    {workoutType === cat ? (
+                      <LinearGradient colors={['#10b981', '#059669']} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
+                        <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>{cat}</Text>
+                      </LinearGradient>
+                    ) : (
+                      <View style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: '#09090b', borderWidth: 1, borderColor: '#27272a', borderRadius: 8 }}>
+                        <Text style={{ color: '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{cat}</Text>
+                      </View>
+                    )}
                   </TouchableOpacity>
                 ))}
               </View>
@@ -85,12 +115,14 @@ export default function DailyCheckInModal({
                 style={{ backgroundColor: '#09090b', color: '#f4f4f5', borderRadius: 10, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: '#27272a' }}
               />
 
-              <TouchableOpacity onPress={() => onCheckInYes(hours, workoutType, notes)} style={{ backgroundColor: '#10b981', paddingVertical: 14, borderRadius: 14, alignItems: 'center' }}>
-                <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Save Workout Log</Text>
+              <TouchableOpacity onPress={() => onCheckInYes(hours, workoutType, notes)} style={{ borderRadius: 14, overflow: 'hidden' }}>
+                <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
+                  <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Save Workout Log</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           )}
-        </View>
+        </LinearGradient>
       </View>
     </Modal>
   );

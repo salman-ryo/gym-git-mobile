@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { PREBUILT_PLANS, WeeklyPlan } from '@/lib/types';
 import { Settings2, Check, X, Plus } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface WeeklyPlanModalProps {
   isOpen: boolean;
@@ -48,7 +49,12 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
   return (
     <Modal visible={isOpen} transparent animationType="slide">
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 }}>
-        <View style={{ backgroundColor: '#18181b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#27272a', maxHeight: '85%' }}>
+        <LinearGradient
+          colors={['#18181b', '#0f291e']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)', maxHeight: '85%' }}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <Settings2 size={20} color="#10b981" />
@@ -72,7 +78,7 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
                   style={{
                     backgroundColor: isSelected ? 'rgba(16,185,129,0.1)' : '#09090b',
                     padding: 14,
-                    borderRadius: 14,
+                    borderRadius: 16,
                     marginBottom: 10,
                     borderWidth: 1,
                     borderColor: isSelected ? '#10b981' : '#27272a',
@@ -100,7 +106,7 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
               style={{
                 backgroundColor: selectedPlanId === 'custom-plan' ? 'rgba(16,185,129,0.1)' : '#09090b',
                 padding: 14,
-                borderRadius: 14,
+                borderRadius: 16,
                 marginBottom: 10,
                 borderWidth: 1,
                 borderColor: selectedPlanId === 'custom-plan' ? '#10b981' : '#27272a',
@@ -152,10 +158,12 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
             )}
           </ScrollView>
 
-          <TouchableOpacity onPress={handleSave} style={{ backgroundColor: '#10b981', paddingVertical: 14, borderRadius: 14, alignItems: 'center', marginTop: 12 }}>
-            <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Activate Selected Plan</Text>
+          <TouchableOpacity onPress={handleSave} style={{ borderRadius: 14, overflow: 'hidden', marginTop: 12 }}>
+            <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
+              <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Activate Selected Plan</Text>
+            </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
       </View>
     </Modal>
   );
