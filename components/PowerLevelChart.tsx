@@ -2,12 +2,13 @@
 
 import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { GymLog, MonthlyStat, PowerScoreBreakdown } from '@/lib/types';
+import { GymLog, MonthlyStat, PowerScoreBreakdown, AnimePower } from '@/lib/types';
 import { formatDateKey } from '@/lib/scientific-streak';
 import { calculateScientificPowerScore } from '@/lib/scientific-power';
 import { Swords } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import PowerScoreGuideModal from './modals/PowerScoreGuideModal';
+import AnimeTierCard from './AnimeTierCard';
 import { Colors } from '@/constants/Colors';
 
 interface PowerLevelChartProps {
@@ -100,6 +101,14 @@ const getPowerColorTheme = (score: number, isCurrent: boolean): PowerColorTheme 
 
 export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartProps) {
   const [guideOpen, setGuideOpen] = useState(false);
+  const [selectedStat, setSelectedStat] = useState<{
+    title: string;
+    score: number;
+    character: AnimePower;
+    gymDays: number;
+    totalHours: number;
+    scoreData: PowerScoreBreakdown;
+  } | null>(null);
 
   const logsMap = useMemo(() => {
     const map = new Map<string, GymLog>();
@@ -261,8 +270,23 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
             const char = w.scoreData.character;
             const theme = getPowerColorTheme(score, w.isCurrentWeek);
 
-            return (
-              <View key={`${w.weekLabel}-${idx}`} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}>
+              return (
+              <TouchableOpacity
+                key={`${w.weekLabel}-${idx}`}
+                onPress={() => {
+                  if (char) {
+                    setSelectedStat({
+                      title: `Week of ${w.weekLabel}`,
+                      score,
+                      character: char,
+                      gymDays: w.count,
+                      totalHours: w.totalHours,
+                      scoreData: w.scoreData,
+                    });
+                  }
+                }}
+                style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}
+              >
                 {char && (
                   <View style={{ position: 'absolute', bottom: `${Math.min(75, heightPercent * 0.7 + 22)}%`, zIndex: 10 }}>
                     <Image source={char.image} style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: theme.borderColor }} />
@@ -290,7 +314,7 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
                 <Text numberOfLines={1} style={{ fontSize: 8, color: theme.textColor, fontWeight: '700', marginTop: 6, width: '100%', textAlign: 'center' }}>
                   {w.weekLabel}
                 </Text>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -311,41 +335,70 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
               const theme = getPowerColorTheme(score, m.isCurrentMonth);
 
               return (
-                <View key={`${m.year}-${m.monthIndex}-${idx}`} style={{ width: 34, alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}>
-                  {char && (
-                    <View style={{ position: 'absolute', bottom: `${Math.min(75, heightPercent * 0.7 + 22)}%`, zIndex: 10 }}>
-                      <Image source={char.image} style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: theme.borderColor }} />
-                    </View>
-                  )}
+              <TouchableOpacity
+                key={`${m.year}-${m.monthIndex}-${idx}`}
+                onPress={() => {
+                  if (char) {
+                    setSelectedStat({
+                      title: `${m.month} ${m.year}`,
+                      score,
+                      character: char,
+                      gymDays: m.count,
+                      totalHours: m.totalHours,
+                      scoreData: m.scoreData,
+                    });
+                  }
+                }}
+                style={{ width: 34, alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}
+              >
+                {char && (
+                  <View style={{ position: 'absolute', bottom: `${Math.min(75, heightPercent * 0.7 + 22)}%`, zIndex: 10 }}>
+                    <Image source={char.image} style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: theme.borderColor }} />
+                  </View>
+                )}
 
-                  <Text style={{ fontSize: 9, fontWeight: '900', color: theme.scoreColor, marginBottom: 4 }}>
-                    {score}
-                  </Text>
+                <Text style={{ fontSize: 9, fontWeight: '900', color: theme.scoreColor, marginBottom: 4 }}>
+                  {score}
+                </Text>
 
-                  <LinearGradient
-                    colors={theme.barColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={{
-                      width: 20,
-                      height: `${heightPercent}%`,
-                      borderRadius: 6,
-                      borderWidth: m.isCurrentMonth ? 1 : 0,
-                      borderColor: '#ffffff',
-                    }}
-                  />
+                <LinearGradient
+                  colors={theme.barColors}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={{
+                    width: 20,
+                    height: `${heightPercent}%`,
+                    borderRadius: 6,
+                    borderWidth: m.isCurrentMonth ? 1 : 0,
+                    borderColor: '#ffffff',
+                  }}
+                />
 
-                  <Text style={{ fontSize: 8, color: theme.textColor, fontWeight: '700', marginTop: 6 }}>
-                    {m.month}
-                  </Text>
-                </View>
-              );
+                <Text style={{ fontSize: 8, color: theme.textColor, fontWeight: '700', marginTop: 6 }}>
+                  {m.month}
+                </Text>
+              </TouchableOpacity>
+            );
             })}
           </View>
         </ScrollView>
       </View>
 
       <PowerScoreGuideModal isOpen={guideOpen} onClose={() => setGuideOpen(false)} />
+
+      {/* Anime Tier Card bottom sheet */}
+      {selectedStat && (
+        <AnimeTierCard
+          isOpen={!!selectedStat}
+          onClose={() => setSelectedStat(null)}
+          title={selectedStat.title}
+          score={selectedStat.score}
+          character={selectedStat.character}
+          gymDays={selectedStat.gymDays}
+          totalHours={selectedStat.totalHours}
+          scoreData={selectedStat.scoreData}
+        />
+      )}
     </LinearGradient>
   );
 }
