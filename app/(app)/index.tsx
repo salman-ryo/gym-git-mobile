@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
-import Header from '@/components/Header';
-import StatsOverview from '@/components/StatsOverview';
+import AppHeader from '@/components/AppHeader';
 import FilterBar from '@/components/FilterBar';
 import ContributionGraph from '@/components/ContributionGraph';
 import PowerLevelChart from '@/components/PowerLevelChart';
@@ -101,7 +100,7 @@ export default function DashboardScreen() {
 
   return (
     <LinearGradient colors={[Colors.dark.background, '#0c0f17', Colors.dark.background]} style={{ flex: 1 }}>
-      <Header currentStreak={stats?.currentStreak || 0} />
+      <AppHeader stats={stats} onPlanSaved={refreshData} />
 
       {loading ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -112,7 +111,6 @@ export default function DashboardScreen() {
           contentContainerStyle={{ padding: 16 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.brandPrimary} />}
         >
-          <StatsOverview stats={stats} />
           <FilterBar
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}

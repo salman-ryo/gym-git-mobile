@@ -1,5 +1,6 @@
 import { api } from '@/utils/api';
 import { GymLog, MonthlyStat, Stats, WeeklyPlan } from './types';
+import { calculateScientificStreak } from './scientific-streak';
 
 export function mapGymLog(raw: any): GymLog {
   if (!raw) return { id: '', date: '', hours: 0, workoutType: 'Custom' };
@@ -97,12 +98,15 @@ export async function fetchDashboardStats(_userPlan?: WeeklyPlan): Promise<Stats
   const totalHours = rawStats?.total_hours ?? rawStats?.totalHours ?? 0;
   const averageHoursPerSession = rawStats?.avg_session_duration ?? rawStats?.averageHoursPerSession ?? 0;
 
+  const scientificStreak = calculateScientificStreak(logs, _userPlan);
+
   return {
     currentStreak,
-    longestStreak: currentStreak,
+    longestStreak: Math.max(currentStreak, scientificStreak.longestStreakDays),
     totalDays,
     totalHours: Math.round(totalHours * 10) / 10,
     averageHoursPerSession: Math.round(averageHoursPerSession * 10) / 10,
     monthlyData,
+    scientificStreak,
   };
 }
