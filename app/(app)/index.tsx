@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import FilterBar from '@/components/FilterBar';
 import ContributionGraph from '@/components/ContributionGraph';
-import MonthlyBarChart from '@/components/MonthlyBarChart';
+import PowerLevelChart from '@/components/PowerLevelChart';
 import DailyCheckInModal from '@/components/modals/DailyCheckInModal';
 import EditLogModal from '@/components/modals/EditLogModal';
 import WeeklyPlanModal from '@/components/modals/WeeklyPlanModal';
@@ -98,15 +98,15 @@ export default function DashboardScreen() {
   };
 
   return (
-    <LinearGradient colors={['#09090b', '#0d1912', '#09090b']} style={{ flex: 1 }}>
+    <LinearGradient colors={['#09090b', '#0c0f17', '#09090b']} style={{ flex: 1 }}>
       <Header currentStreak={stats?.currentStreak || 0} />
 
       <ScrollView
         contentContainerStyle={{ padding: 16 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#818cf8" />}
       >
         {loading ? (
-          <ActivityIndicator size="large" color="#10b981" style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color="#818cf8" style={{ marginTop: 40 }} />
         ) : (
           <>
             <StatsOverview stats={stats} />
@@ -125,7 +125,7 @@ export default function DashboardScreen() {
                 setEditTileLog(log);
               }}
             />
-            {stats?.monthlyData && <MonthlyBarChart monthlyData={stats.monthlyData} logs={logs} />}
+            {stats?.monthlyData && <PowerLevelChart monthlyData={stats.monthlyData} logs={logs} />}
           </>
         )}
       </ScrollView>

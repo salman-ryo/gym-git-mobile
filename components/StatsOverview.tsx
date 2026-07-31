@@ -13,10 +13,10 @@ export default function StatsOverview({ stats }: { stats: Stats | null }) {
       <View style={{ flexDirection: 'row', gap: 12 }}>
         {/* Current Streak Card */}
         <LinearGradient
-          colors={['#18181b', '#064e3b']}
+          colors={['#18181b', 'rgba(245,158,11,0.15)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' }}
+          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(245,158,11,0.4)' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
             <Flame size={16} color="#f59e0b" />
@@ -25,15 +25,15 @@ export default function StatsOverview({ stats }: { stats: Stats | null }) {
           <Text style={{ color: '#f4f4f5', fontSize: 24, fontWeight: '900' }}>
             {stats.currentStreak} <Text style={{ fontSize: 13, color: '#f59e0b' }}>Days</Text>
           </Text>
-          <Text style={{ color: '#34d399', fontSize: 10, fontWeight: '600', marginTop: 4 }}>Protected by plan rest days</Text>
+          <Text style={{ color: '#f59e0b', fontSize: 10, fontWeight: '600', marginTop: 4 }}>Protected by plan rest days</Text>
         </LinearGradient>
 
         {/* Longest Record Card */}
         <LinearGradient
-          colors={['#18181b', '#022c22']}
+          colors={['#18181b', 'rgba(16,185,129,0.15)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(16,185,129,0.2)' }}
+          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
             <Trophy size={16} color="#10b981" />
@@ -42,31 +42,31 @@ export default function StatsOverview({ stats }: { stats: Stats | null }) {
           <Text style={{ color: '#f4f4f5', fontSize: 24, fontWeight: '900' }}>
             {stats.longestStreak} <Text style={{ fontSize: 13, color: '#10b981' }}>Days</Text>
           </Text>
-          <Text style={{ color: '#6ee7b7', fontSize: 10, marginTop: 4 }}>Best compliant run</Text>
+          <Text style={{ color: '#34d399', fontSize: 10, fontWeight: '600', marginTop: 4 }}>Best compliant run</Text>
         </LinearGradient>
       </View>
 
       <View style={{ flexDirection: 'row', gap: 12 }}>
         {/* Compliance Card */}
         <LinearGradient
-          colors={['#18181b', '#134e4a']}
+          colors={['#18181b', 'rgba(168,85,247,0.15)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(20,184,166,0.3)' }}
+          style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(168,85,247,0.3)' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-            <CheckCircle2 size={16} color="#14b8a6" />
+            <CheckCircle2 size={16} color="#c084fc" />
             <Text style={{ color: '#a1a1aa', fontSize: 11, fontWeight: '700', textTransform: 'uppercase' }}>Adherence</Text>
           </View>
           <Text style={{ color: '#f4f4f5', fontSize: 24, fontWeight: '900' }}>{streak?.complianceRate || 92}%</Text>
-          <Text style={{ color: '#2dd4bf', fontSize: 10, fontWeight: '600', marginTop: 4 }}>
+          <Text style={{ color: '#c084fc', fontSize: 10, fontWeight: '600', marginTop: 4 }}>
             Week: {streak?.currentWeekDone || 0}/{streak?.currentWeekTarget || 4} ({streak?.currentWeekStatus || 'On Track'})
           </Text>
         </LinearGradient>
 
         {/* Total Hours Card */}
         <LinearGradient
-          colors={['#18181b', '#0c4a6e']}
+          colors={['#18181b', 'rgba(56,189,248,0.15)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ flex: 1, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(56,189,248,0.3)' }}

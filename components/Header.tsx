@@ -35,14 +35,14 @@ export default function Header({ currentStreak = 0 }: HeaderProps) {
       {/* Brand Logo */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <LinearGradient
-          colors={['#10b981', '#059669']}
+          colors={['#818cf8', '#6366f1']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ width: 38, height: 38, borderRadius: 12, justifyContent: 'center', alignItems: 'center' }}
         >
           <Dumbbell size={22} color="#09090b" />
         </LinearGradient>
-        <Text style={{ fontSize: 20, fontWeight: '900', color: '#10b981', letterSpacing: -0.5 }}>Gym-Git</Text>
+        <Text style={{ fontSize: 20, fontWeight: '900', color: '#818cf8', letterSpacing: -0.5 }}>Gym-Git</Text>
       </View>
 
       {/* Streak Badge */}

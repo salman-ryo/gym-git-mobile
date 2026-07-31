@@ -49,6 +49,7 @@ export interface AnimePower {
   name: string;
   image: any;
   power: number;
+  description?: string;
 }
 
 export interface PowerScoreBreakdown {

@@ -50,14 +50,14 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
     <Modal visible={isOpen} transparent animationType="slide">
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 }}>
         <LinearGradient
-          colors={['#18181b', '#0f291e']}
+          colors={['#18181b', '#0f172a']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)', maxHeight: '85%' }}
+          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(129, 140, 248, 0.3)', maxHeight: '85%' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Settings2 size={20} color="#10b981" />
+              <Settings2 size={20} color="#818cf8" />
               <Text style={{ color: '#f4f4f5', fontSize: 18, fontWeight: '800' }}>Choose Workout Split</Text>
             </View>
             {onClose && !preventClose && (
@@ -76,23 +76,23 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
                   key={plan.id}
                   onPress={() => setSelectedPlanId(plan.id)}
                   style={{
-                    backgroundColor: isSelected ? 'rgba(16,185,129,0.1)' : '#09090b',
+                    backgroundColor: isSelected ? 'rgba(129, 140, 248, 0.08)' : '#09090b',
                     padding: 14,
                     borderRadius: 16,
                     marginBottom: 10,
                     borderWidth: 1,
-                    borderColor: isSelected ? '#10b981' : '#27272a',
+                    borderColor: isSelected ? '#818cf8' : '#27272a',
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                     <Text style={{ color: '#f4f4f5', fontWeight: '800', fontSize: 14 }}>{plan.name}</Text>
-                    {isSelected && <Check size={16} color="#10b981" />}
+                    {isSelected && <Check size={16} color="#818cf8" />}
                   </View>
                   <Text style={{ color: '#a1a1aa', fontSize: 11, marginBottom: 8 }}>{plan.description}</Text>
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
                     {plan.categories.map((c) => (
                       <View key={c} style={{ backgroundColor: '#27272a', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
-                        <Text style={{ color: '#10b981', fontSize: 10, fontWeight: '600' }}>{c}</Text>
+                        <Text style={{ color: '#818cf8', fontSize: 10, fontWeight: '600' }}>{c}</Text>
                       </View>
                     ))}
                   </View>
@@ -104,17 +104,17 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
             <TouchableOpacity
               onPress={() => setSelectedPlanId('custom-plan')}
               style={{
-                backgroundColor: selectedPlanId === 'custom-plan' ? 'rgba(16,185,129,0.1)' : '#09090b',
+                backgroundColor: selectedPlanId === 'custom-plan' ? 'rgba(129, 140, 248, 0.08)' : '#09090b',
                 padding: 14,
                 borderRadius: 16,
                 marginBottom: 10,
                 borderWidth: 1,
-                borderColor: selectedPlanId === 'custom-plan' ? '#10b981' : '#27272a',
+                borderColor: selectedPlanId === 'custom-plan' ? '#818cf8' : '#27272a',
               }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, justifyContent: 'space-between' }}>
                 <Text style={{ color: '#f4f4f5', fontWeight: '800', fontSize: 14 }}>Custom Workout Split</Text>
-                {selectedPlanId === 'custom-plan' && <Check size={16} color="#10b981" />}
+                {selectedPlanId === 'custom-plan' && <Check size={16} color="#818cf8" />}
               </View>
               <Text style={{ color: '#a1a1aa', fontSize: 11 }}>Define your own workout categories and tags.</Text>
             </TouchableOpacity>
@@ -134,7 +134,7 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
                   {customCats.map((cat) => (
                     <View key={cat} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#27272a', paddingLeft: 8, paddingRight: 4, paddingVertical: 4, borderRadius: 6, gap: 4 }}>
-                      <Text style={{ color: '#10b981', fontSize: 11, fontWeight: '600' }}>{cat}</Text>
+                      <Text style={{ color: '#818cf8', fontSize: 11, fontWeight: '600' }}>{cat}</Text>
                       <TouchableOpacity onPress={() => handleRemoveCustomTag(cat)}>
                         <X size={12} color="#ef4444" />
                       </TouchableOpacity>
@@ -150,7 +150,7 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
                     placeholderTextColor="#71717a"
                     style={{ flex: 1, backgroundColor: '#18181b', color: '#f4f4f5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, fontSize: 12, borderWidth: 1, borderColor: '#27272a' }}
                   />
-                  <TouchableOpacity onPress={handleAddCustomTag} style={{ backgroundColor: '#10b981', paddingHorizontal: 12, borderRadius: 8, justifyContent: 'center' }}>
+                  <TouchableOpacity onPress={handleAddCustomTag} style={{ backgroundColor: '#818cf8', paddingHorizontal: 12, borderRadius: 8, justifyContent: 'center' }}>
                     <Plus size={16} color="#09090b" />
                   </TouchableOpacity>
                 </View>
@@ -159,7 +159,7 @@ export default function WeeklyPlanModal({ isOpen, currentPlan, onSavePlan, onClo
           </ScrollView>
 
           <TouchableOpacity onPress={handleSave} style={{ borderRadius: 14, overflow: 'hidden', marginTop: 12 }}>
-            <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
+            <LinearGradient colors={['#818cf8', '#6366f1']} style={{ paddingVertical: 14, alignItems: 'center' }}>
               <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Activate Selected Plan</Text>
             </LinearGradient>
           </TouchableOpacity>

@@ -35,13 +35,13 @@ export default function FilterBar({
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <SlidersHorizontal size={14} color="#10b981" />
+          <SlidersHorizontal size={14} color="#818cf8" />
           <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>Filter Activity</Text>
         </View>
         {onOpenPlanModal && (
           <TouchableOpacity onPress={onOpenPlanModal} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#27272a', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
-            <Settings2 size={12} color="#10b981" />
-            <Text style={{ color: '#10b981', fontSize: 11, fontWeight: '700' }}>Plan Split</Text>
+            <Settings2 size={12} color="#818cf8" />
+            <Text style={{ color: '#818cf8', fontSize: 11, fontWeight: '700' }}>Plan Split</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -54,7 +54,7 @@ export default function FilterBar({
             return (
               <TouchableOpacity key={item.label} onPress={() => onFilterChange(item.label)}>
                 <LinearGradient
-                  colors={['#10b981', '#059669']}
+                  colors={['#818cf8', '#6366f1']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10 }}
