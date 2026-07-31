@@ -124,34 +124,22 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         />
 
-        {/* Watermark — dumbbell top-right */}
-        <Image
-          source={require('@/assets/images/ggdumbell.webp')}
-          style={{
-            position: 'absolute',
-            top: -10,
-            right: -20,
-            width: 120,
-            height: 120,
-            opacity: 0.07,
-            transform: [{ rotate: '-15deg' }],
-          }}
-          resizeMode="contain"
-        />
-        {/* Watermark — git tree bottom-left */}
-        <Image
-          source={require('@/assets/images/gggit.webp')}
-          style={{
-            position: 'absolute',
-            bottom: -20,
-            left: -10,
-            width: 100,
-            height: 100,
-            opacity: 0.07,
-            transform: [{ rotate: '10deg' }],
-          }}
-          resizeMode="contain"
-        />
+        {/* Watermarks — dumbbells scattered */}
+        <Image source={require('@/assets/images/ggdumbell.webp')} resizeMode="contain"
+          style={{ position: 'absolute', top: -14, right: -16, width: 110, height: 110, opacity: 0.08, transform: [{ rotate: '-18deg' }] }} />
+        <Image source={require('@/assets/images/ggdumbell.webp')} resizeMode="contain"
+          style={{ position: 'absolute', top: 4, right: 90, width: 50, height: 50, opacity: 0.05, transform: [{ rotate: '25deg' }] }} />
+        <Image source={require('@/assets/images/ggdumbell.webp')} resizeMode="contain"
+          style={{ position: 'absolute', bottom: -8, right: 40, width: 70, height: 70, opacity: 0.04, transform: [{ rotate: '-8deg' }] }} />
+
+        {/* Watermarks — git trees scattered */}
+        <Image source={require('@/assets/images/gggit.webp')} resizeMode="contain"
+          style={{ position: 'absolute', bottom: -18, left: -12, width: 100, height: 100, opacity: 0.08, transform: [{ rotate: '12deg' }] }} />
+        <Image source={require('@/assets/images/gggit.webp')} resizeMode="contain"
+          style={{ position: 'absolute', top: 2, left: 80, width: 44, height: 44, opacity: 0.05, transform: [{ rotate: '-20deg' }] }} />
+        <Image source={require('@/assets/images/gggit.webp')} resizeMode="contain"
+          style={{ position: 'absolute', bottom: -4, left: 140, width: 60, height: 60, opacity: 0.04, transform: [{ rotate: '30deg' }] }} />
+
 
         {/* Content row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>

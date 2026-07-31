@@ -8,8 +8,8 @@
 export const Colors = {
   // Brand Gradients
   brandGradient: ['#34d399', '#5eead4', '#a7f3d0'], // Emerald-400 -> Teal-300 -> Emerald-200
-  brandPrimary: '#34d399', // Emerald-400
-  brandSecondary: '#10b981', // Emerald-500
+  brandPrimary: '#06b6d4', // Emerald-400
+  brandSecondary: '#0891b2', // Emerald-500
   brandTeal: '#14b8a6', // Teal-500
 
   // Backdrop glows
