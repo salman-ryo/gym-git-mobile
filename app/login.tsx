@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView, Image } from 'react-native';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'expo-router';
-import { Dumbbell, Eye, EyeOff } from 'lucide-react-native';
+import { Eye, EyeOff } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 export default function LoginScreen() {
   const { login, signup, loginWithGoogle } = useAuth();
@@ -44,26 +45,54 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={['#09090b', '#0f291e', '#09090b']} style={{ flex: 1 }}>
+    <LinearGradient colors={[Colors.dark.background, Colors.dark.background]} style={{ flex: 1 }}>
+      {/* Background Glow Points */}
+      <View style={{ position: 'absolute', top: '10%', left: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(20, 184, 166, 0.06)' }} />
+      <View style={{ position: 'absolute', bottom: '15%', right: -60, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(168, 85, 247, 0.06)' }} />
+
+      {/* Watermarks */}
+      <Image
+        source={require('@/assets/images/ggdumbell.webp')}
+        style={{
+          position: 'absolute',
+          top: '5%',
+          right: '-10%',
+          width: 200,
+          height: 200,
+          opacity: 0.07,
+          transform: [{ rotate: '-15deg' }],
+          resizeMode: 'contain',
+        }}
+      />
+      <Image
+        source={require('@/assets/images/gggit.webp')}
+        style={{
+          position: 'absolute',
+          bottom: '5%',
+          left: '-5%',
+          width: 220,
+          height: 220,
+          opacity: 0.07,
+          transform: [{ rotate: '10deg' }],
+          resizeMode: 'contain',
+        }}
+      />
+
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}>
         <LinearGradient
-          colors={['#18181b', '#111827']}
+          colors={[Colors.dark.card, 'rgba(23, 23, 23, 0.8)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(16,185,129,0.25)' }}
+          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: '#27272a' }}
         >
           {/* Header */}
           <View style={{ alignItems: 'center', marginBottom: 20 }}>
-            <LinearGradient
-              colors={['#10b981', '#059669']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ width: 54, height: 54, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}
-            >
-              <Dumbbell size={30} color="#09090b" />
-            </LinearGradient>
-            <Text style={{ fontSize: 32, fontWeight: '900', color: '#10b981', letterSpacing: -0.5 }}>Gym-Git</Text>
-            <Text style={{ fontSize: 13, color: '#a1a1aa', marginTop: 4 }}>Commit your workouts like code</Text>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={{ width: 56, height: 56, borderRadius: 18, marginBottom: 12 }}
+            />
+            <Text style={{ fontSize: 32, fontWeight: '900', color: '#fafafa', letterSpacing: -0.5 }}>Gym-Git</Text>
+            <Text style={{ fontSize: 13, color: Colors.dark.mutedForeground, marginTop: 4 }}>Commit your workouts like code</Text>
           </View>
 
           {/* Mode Switcher */}
@@ -73,12 +102,12 @@ export default function LoginScreen() {
               style={{ flex: 1, borderRadius: 10, overflow: 'hidden' }}
             >
               {mode === 'signin' ? (
-                <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 10, alignItems: 'center' }}>
+                <LinearGradient colors={['#06b6d4', '#0891b2']} style={{ paddingVertical: 10, alignItems: 'center' }}>
                   <Text style={{ fontWeight: '800', fontSize: 13, color: '#09090b' }}>Sign In</Text>
                 </LinearGradient>
               ) : (
                 <View style={{ paddingVertical: 10, alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '700', fontSize: 13, color: '#a1a1aa' }}>Sign In</Text>
+                  <Text style={{ fontWeight: '700', fontSize: 13, color: '#71717a' }}>Sign In</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -87,12 +116,12 @@ export default function LoginScreen() {
               style={{ flex: 1, borderRadius: 10, overflow: 'hidden' }}
             >
               {mode === 'signup' ? (
-                <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 10, alignItems: 'center' }}>
+                <LinearGradient colors={['#06b6d4', '#0891b2']} style={{ paddingVertical: 10, alignItems: 'center' }}>
                   <Text style={{ fontWeight: '800', fontSize: 13, color: '#09090b' }}>Create Account</Text>
                 </LinearGradient>
               ) : (
                 <View style={{ paddingVertical: 10, alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '700', fontSize: 13, color: '#a1a1aa' }}>Create Account</Text>
+                  <Text style={{ fontWeight: '700', fontSize: 13, color: '#71717a' }}>Create Account</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -107,9 +136,9 @@ export default function LoginScreen() {
           {/* Google OAuth Button */}
           <TouchableOpacity
             onPress={loginWithGoogle}
-            style={{ backgroundColor: '#27272a', paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: '#3f3f46' }}
+            style={{ backgroundColor: 'rgba(38,38,38,0.6)', paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(63,63,70,0.6)' }}
           >
-            <Text style={{ color: '#f4f4f5', fontWeight: '700', fontSize: 14 }}>Continue with Google</Text>
+            <Text style={{ color: '#ffffff', fontWeight: '700', fontSize: 14 }}>Continue with Google</Text>
           </TouchableOpacity>
 
           {/* Inputs */}
@@ -120,8 +149,8 @@ export default function LoginScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="Alex Developer"
-                placeholderTextColor="#71717a"
-                style={{ backgroundColor: '#09090b', color: '#f4f4f5', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, borderWidth: 1, borderColor: '#27272a' }}
+                placeholderTextColor="#52525b"
+                style={{ backgroundColor: 'rgba(24,24,27,0.5)', color: '#ffffff', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, borderWidth: 1, borderColor: '#27272a' }}
               />
             </View>
           )}
@@ -134,38 +163,47 @@ export default function LoginScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
               placeholder="you@example.com"
-              placeholderTextColor="#71717a"
-              style={{ backgroundColor: '#09090b', color: '#f4f4f5', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, borderWidth: 1, borderColor: '#27272a' }}
+              placeholderTextColor="#52525b"
+              style={{ backgroundColor: 'rgba(24,24,27,0.5)', color: '#ffffff', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, borderWidth: 1, borderColor: '#27272a' }}
             />
           </View>
 
           <View style={{ marginBottom: 20 }}>
             <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '600', marginBottom: 6 }}>Password</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#09090b', borderRadius: 12, borderWidth: 1, borderColor: '#27272a', paddingRight: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(24,24,27,0.5)', borderRadius: 12, borderWidth: 1, borderColor: '#27272a', paddingRight: 14 }}>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 placeholder="••••••••"
-                placeholderTextColor="#71717a"
-                style={{ flex: 1, color: '#f4f4f5', paddingHorizontal: 14, paddingVertical: 12 }}
+                placeholderTextColor="#52525b"
+                style={{ flex: 1, color: '#ffffff', paddingHorizontal: 14, paddingVertical: 12 }}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
-                  <EyeOff size={18} color="#a1a1aa" />
+                  <EyeOff size={18} color="#52525b" />
                 ) : (
-                  <Eye size={18} color="#a1a1aa" />
+                  <Eye size={18} color="#52525b" />
                 )}
               </TouchableOpacity>
             </View>
           </View>
 
-          <TouchableOpacity onPress={handleSubmit} disabled={submitting} style={{ borderRadius: 14, overflow: 'hidden' }}>
-            <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={submitting}
+            style={{ borderRadius: 14, overflow: 'hidden' }}
+          >
+            <LinearGradient
+              colors={['#047857', '#4b0a83ff']}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={{ paddingVertical: 14, alignItems: 'center' }}
+            >
               {submitting ? (
-                <ActivityIndicator color="#09090b" />
+                <ActivityIndicator color="#ffffff" />
               ) : (
-                <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>
+                <Text style={{ color: '#ffffff', fontWeight: '800', fontSize: 15 }}>
                   {mode === 'signup' ? 'Create Account & Start' : 'Sign In'}
                 </Text>
               )}

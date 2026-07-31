@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { WorkoutType, WeeklyPlan } from '@/lib/types';
 import { SlidersHorizontal, Settings2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 interface FilterBarProps {
   activeFilter: WorkoutType | 'All';
@@ -28,20 +29,20 @@ export default function FilterBar({
 
   return (
     <LinearGradient
-      colors={['#18181b', '#0f172a']}
+      colors={[Colors.dark.card, Colors.dark.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ padding: 14, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: '#27272a' }}
+      style={{ padding: 14, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: Colors.dark.border }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <SlidersHorizontal size={14} color="#818cf8" />
-          <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>Filter Activity</Text>
+          <SlidersHorizontal size={14} color={Colors.brandPrimary} />
+          <Text style={{ color: Colors.dark.foreground, fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>Filter Activity</Text>
         </View>
         {onOpenPlanModal && (
-          <TouchableOpacity onPress={onOpenPlanModal} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#27272a', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
-            <Settings2 size={12} color="#818cf8" />
-            <Text style={{ color: '#818cf8', fontSize: 11, fontWeight: '700' }}>Plan Split</Text>
+          <TouchableOpacity onPress={onOpenPlanModal} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.dark.secondary, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+            <Settings2 size={12} color={Colors.brandPrimary} />
+            <Text style={{ color: Colors.brandPrimary, fontSize: 11, fontWeight: '700' }}>Plan Split</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -54,12 +55,12 @@ export default function FilterBar({
             return (
               <TouchableOpacity key={item.label} onPress={() => onFilterChange(item.label)}>
                 <LinearGradient
-                  colors={['#818cf8', '#6366f1']}
+                  colors={[Colors.brandPrimary, Colors.brandSecondary]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10 }}
                 >
-                  <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>
+                  <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 12 }}>
                     {item.label} {item.isExtra ? '(Past)' : ''}
                   </Text>
                 </LinearGradient>
@@ -75,12 +76,12 @@ export default function FilterBar({
                 paddingHorizontal: 14,
                 paddingVertical: 7,
                 borderRadius: 10,
-                backgroundColor: item.isExtra ? 'rgba(245,158,11,0.15)' : '#09090b',
+                backgroundColor: item.isExtra ? Colors.cards.streak.glow : Colors.dark.background,
                 borderWidth: 1,
-                borderColor: item.isExtra ? '#f59e0b' : '#27272a',
+                borderColor: item.isExtra ? Colors.cards.streak.border : Colors.dark.border,
               }}
             >
-              <Text style={{ color: item.isExtra ? '#f59e0b' : '#a1a1aa', fontWeight: '700', fontSize: 12 }}>
+              <Text style={{ color: item.isExtra ? Colors.cards.streak.text : Colors.dark.mutedForeground, fontWeight: '700', fontSize: 12 }}>
                 {item.label} {item.isExtra ? '(Past)' : ''}
               </Text>
             </TouchableOpacity>

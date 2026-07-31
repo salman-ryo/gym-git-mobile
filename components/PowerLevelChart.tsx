@@ -8,6 +8,7 @@ import { calculateScientificPowerScore } from '@/lib/scientific-power';
 import { Swords } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import PowerScoreGuideModal from './modals/PowerScoreGuideModal';
+import { Colors } from '@/constants/Colors';
 
 interface PowerLevelChartProps {
   monthlyData: MonthlyStat[];
@@ -42,58 +43,58 @@ interface PowerColorTheme {
 const getPowerColorTheme = (score: number, isCurrent: boolean): PowerColorTheme => {
   if (score === 0) {
     return {
-      barColors: ['#27272a', '#18181b'],
-      borderColor: '#27272a',
-      textColor: '#52525b',
-      scoreColor: '#52525b',
+      barColors: [Colors.dark.secondary, Colors.dark.card],
+      borderColor: Colors.dark.secondary,
+      textColor: Colors.dark.mutedForeground,
+      scoreColor: Colors.dark.mutedForeground,
     };
   }
 
   if (score < 35) {
     return {
-      barColors: isCurrent ? ['#0284c7', '#38bdf8'] : ['rgba(2,132,199,0.3)', 'rgba(56,189,248,0.3)'],
-      borderColor: isCurrent ? '#38bdf8' : '#27272a',
-      textColor: isCurrent ? '#38bdf8' : '#71717a',
-      scoreColor: isCurrent ? '#38bdf8' : '#71717a',
+      barColors: isCurrent ? [Colors.cards.hours.border, Colors.cards.hours.text] : ['rgba(59,130,246,0.3)', 'rgba(96,165,250,0.3)'],
+      borderColor: isCurrent ? Colors.cards.hours.text : Colors.dark.border,
+      textColor: isCurrent ? Colors.cards.hours.text : Colors.dark.mutedForeground,
+      scoreColor: isCurrent ? Colors.cards.hours.text : Colors.dark.mutedForeground,
     };
   }
   if (score < 55) {
     return {
-      barColors: isCurrent ? ['#059669', '#34d399'] : ['rgba(5,150,105,0.3)', 'rgba(52,211,153,0.3)'],
-      borderColor: isCurrent ? '#34d399' : '#27272a',
-      textColor: isCurrent ? '#34d399' : '#71717a',
-      scoreColor: isCurrent ? '#34d399' : '#71717a',
+      barColors: isCurrent ? [Colors.brandSecondary, Colors.brandPrimary] : ['rgba(16,185,129,0.3)', 'rgba(52,211,153,0.3)'],
+      borderColor: isCurrent ? Colors.brandPrimary : Colors.dark.border,
+      textColor: isCurrent ? Colors.brandPrimary : Colors.dark.mutedForeground,
+      scoreColor: isCurrent ? Colors.brandPrimary : Colors.dark.mutedForeground,
     };
   }
   if (score < 72) {
     return {
       barColors: isCurrent ? ['#4f46e5', '#818cf8'] : ['rgba(79,70,229,0.3)', 'rgba(129,140,248,0.3)'],
-      borderColor: isCurrent ? '#818cf8' : '#27272a',
-      textColor: isCurrent ? '#818cf8' : '#71717a',
-      scoreColor: isCurrent ? '#818cf8' : '#71717a',
+      borderColor: isCurrent ? '#818cf8' : Colors.dark.border,
+      textColor: isCurrent ? '#818cf8' : Colors.dark.mutedForeground,
+      scoreColor: isCurrent ? '#818cf8' : Colors.dark.mutedForeground,
     };
   }
   if (score < 88) {
     return {
-      barColors: isCurrent ? ['#7e22ce', '#c084fc'] : ['rgba(126,34,206,0.3)', 'rgba(192,132,252,0.3)'],
-      borderColor: isCurrent ? '#c084fc' : '#27272a',
-      textColor: isCurrent ? '#c084fc' : '#71717a',
-      scoreColor: isCurrent ? '#c084fc' : '#71717a',
+      barColors: isCurrent ? [Colors.cards.compliance.border, Colors.cards.compliance.text] : ['rgba(168,85,247,0.3)', 'rgba(192,132,252,0.3)'],
+      borderColor: isCurrent ? Colors.cards.compliance.text : Colors.dark.border,
+      textColor: isCurrent ? Colors.cards.compliance.text : Colors.dark.mutedForeground,
+      scoreColor: isCurrent ? Colors.cards.compliance.text : Colors.dark.mutedForeground,
     };
   }
   if (score < 97) {
     return {
       barColors: isCurrent ? ['#be123c', '#fb7185'] : ['rgba(190,18,60,0.3)', 'rgba(251,113,133,0.3)'],
-      borderColor: isCurrent ? '#fb7185' : '#27272a',
-      textColor: isCurrent ? '#fb7185' : '#71717a',
-      scoreColor: isCurrent ? '#fb7185' : '#71717a',
+      borderColor: isCurrent ? '#fb7185' : Colors.dark.border,
+      textColor: isCurrent ? '#fb7185' : Colors.dark.mutedForeground,
+      scoreColor: isCurrent ? '#fb7185' : Colors.dark.mutedForeground,
     };
   }
   return {
-    barColors: isCurrent ? ['#d97706', '#fbbf24'] : ['rgba(217,119,6,0.3)', 'rgba(251,191,36,0.3)'],
-    borderColor: isCurrent ? '#fbbf24' : '#27272a',
-    textColor: isCurrent ? '#fbbf24' : '#71717a',
-    scoreColor: isCurrent ? '#fbbf24' : '#71717a',
+    barColors: isCurrent ? [Colors.cards.streak.border, Colors.cards.streak.text] : ['rgba(245,158,11,0.3)', 'rgba(251,191,36,0.3)'],
+    borderColor: isCurrent ? Colors.cards.streak.text : Colors.dark.border,
+    textColor: isCurrent ? Colors.cards.streak.text : Colors.dark.mutedForeground,
+    scoreColor: isCurrent ? Colors.cards.streak.text : Colors.dark.mutedForeground,
   };
 };
 
@@ -102,11 +103,7 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
 
   const logsMap = useMemo(() => {
     const map = new Map<string, GymLog>();
-    logs.forEach((log) => {
-      if (log.hours > 0) {
-        map.set(log.date, log);
-      }
-    });
+    logs.forEach((l) => map.set(l.date, l));
     return map;
   }, [logs]);
 
@@ -215,21 +212,21 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
 
   return (
     <LinearGradient
-      colors={['#18181b', '#0f172a']}
+      colors={[Colors.dark.card, Colors.dark.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ padding: 16, borderRadius: 24, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(129, 140, 248, 0.2)', gap: 16 }}
+      style={{ padding: 16, borderRadius: 24, marginBottom: 16, borderWidth: 1, borderColor: Colors.dark.border, gap: 16 }}
     >
       {/* Header Info */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1, marginRight: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-            <Swords size={16} color="#818cf8" />
-            <Text style={{ color: '#818cf8', fontWeight: '900', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            <Swords size={16} color={Colors.brandPrimary} />
+            <Text style={{ color: Colors.brandPrimary, fontWeight: '900', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5 }}>
               Power Levels
             </Text>
           </View>
-          <Text style={{ color: '#a1a1aa', fontSize: 9, fontWeight: '600' }}>
+          <Text style={{ color: Colors.dark.mutedForeground, fontSize: 9, fontWeight: '600' }}>
             Sci-scored based on consistency, duration, variety &amp; momentum.
           </Text>
         </View>
@@ -240,20 +237,20 @@ export default function PowerLevelChart({ monthlyData, logs }: PowerLevelChartPr
             paddingHorizontal: 12,
             paddingVertical: 6,
             borderRadius: 20,
-            backgroundColor: '#09090b',
+            backgroundColor: Colors.dark.background,
             borderWidth: 1,
-            borderColor: '#27272a',
+            borderColor: Colors.dark.border,
           }}
         >
-          <Text style={{ color: '#818cf8', fontSize: 9, fontWeight: '900', textTransform: 'uppercase' }}>
+          <Text style={{ color: Colors.brandPrimary, fontSize: 9, fontWeight: '900', textTransform: 'uppercase' }}>
             What is it?
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Weekly Progress Chart */}
-      <View style={{ borderTopWidth: 1, borderTopColor: '#27272a', paddingTop: 14 }}>
-        <Text style={{ color: '#a1a1aa', fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.2, textAlign: 'center', marginBottom: 10 }}>
+      <View style={{ borderTopWidth: 1, borderTopColor: Colors.dark.border, paddingTop: 14 }}>
+        <Text style={{ color: Colors.dark.mutedForeground, fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.2, textAlign: 'center', marginBottom: 10 }}>
           Weekly Progress
         </Text>
 

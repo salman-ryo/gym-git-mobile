@@ -59,8 +59,8 @@ export function calculateScientificPowerScore(
   const totalScore = activeDays > 0 ? Math.min(100, Math.max(5, rawTotal)) : 0;
 
   // Match Anime Tier
-  const sortedChars = [...animePowerLevels].sort((a, b) => b.power - a.power);
-  const matched = sortedChars.find((c) => totalScore >= c.power) || animePowerLevels[0];
+  const sortedChars = [...animePowerLevels].sort((a, b) => b.minPower - a.minPower);
+  const matched = sortedChars.find((c) => totalScore >= c.minPower) || animePowerLevels[0];
 
   const avgSessionHours = activeDays > 0 ? Number((totalHours / activeDays).toFixed(1)) : 0;
   let evaluationText = 'No gym attendance recorded yet.';

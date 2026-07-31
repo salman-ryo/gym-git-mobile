@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 
+import { Colors } from '@/constants/Colors';
+
 SplashScreen.preventAutoHideAsync();
 
 function RootStack() {
@@ -16,7 +18,7 @@ function RootStack() {
   }, [loading]);
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#09090b' } }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.dark.background } }}>
       <Stack.Screen name="login" />
       <Stack.Screen name="(app)" />
     </Stack>

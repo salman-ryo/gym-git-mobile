@@ -3,6 +3,7 @@ import { View, Text, Modal, TouchableOpacity, TextInput } from 'react-native';
 import { GymLog, WorkoutType } from '@/lib/types';
 import { Trash2, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 interface EditLogModalProps {
   dateStr: string;
@@ -45,30 +46,30 @@ export default function EditLogModal({
     <Modal visible={isOpen} transparent animationType="slide">
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 }}>
         <LinearGradient
-          colors={['#18181b', '#0f291e']}
+          colors={[Colors.dark.card, '#072417']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' }}
+          style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(52,211,153,0.3)' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <Text style={{ color: '#f4f4f5', fontSize: 18, fontWeight: '800' }}>Edit Log: {dateStr}</Text>
+            <Text style={{ color: Colors.dark.foreground, fontSize: 18, fontWeight: '800' }}>Edit Log: {dateStr}</Text>
             <TouchableOpacity onPress={onClose}>
-              <X size={20} color="#a1a1aa" />
+              <X size={20} color={Colors.dark.mutedForeground} />
             </TouchableOpacity>
           </View>
 
           {/* Duration Presets */}
-          <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '600', marginBottom: 8 }}>Duration (Hours)</Text>
+          <Text style={{ color: Colors.dark.primary, fontSize: 12, fontWeight: '600', marginBottom: 8 }}>Duration (Hours)</Text>
           <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16 }}>
             {[0.5, 1.0, 1.5, 2.0, 2.5].map((h) => (
               <TouchableOpacity key={h} onPress={() => setHours(h)} style={{ flex: 1, borderRadius: 8, overflow: 'hidden' }}>
                 {hours === h ? (
-                  <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>{h}h</Text>
+                  <LinearGradient colors={[Colors.brandPrimary, Colors.brandSecondary]} style={{ paddingVertical: 8, alignItems: 'center' }}>
+                    <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 12 }}>{h}h</Text>
                   </LinearGradient>
                 ) : (
-                  <View style={{ paddingVertical: 8, backgroundColor: '#09090b', alignItems: 'center', borderWidth: 1, borderColor: '#27272a', borderRadius: 8 }}>
-                    <Text style={{ color: '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{h}h</Text>
+                  <View style={{ paddingVertical: 8, backgroundColor: Colors.dark.background, alignItems: 'center', borderWidth: 1, borderColor: Colors.dark.border, borderRadius: 8 }}>
+                    <Text style={{ color: Colors.dark.mutedForeground, fontWeight: '700', fontSize: 12 }}>{h}h</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -76,17 +77,17 @@ export default function EditLogModal({
           </View>
 
           {/* Workout Type Chips */}
-          <Text style={{ color: '#d4d4d8', fontSize: 12, fontWeight: '600', marginBottom: 8 }}>Workout Category</Text>
+          <Text style={{ color: Colors.dark.primary, fontSize: 12, fontWeight: '600', marginBottom: 8 }}>Workout Category</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
             {availableWorkoutTypes.map((cat) => (
               <TouchableOpacity key={cat} onPress={() => setWorkoutType(cat)} style={{ borderRadius: 8, overflow: 'hidden' }}>
                 {workoutType === cat ? (
-                  <LinearGradient colors={['#10b981', '#059669']} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
-                    <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 12 }}>{cat}</Text>
+                  <LinearGradient colors={[Colors.brandPrimary, Colors.brandSecondary]} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
+                    <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 12 }}>{cat}</Text>
                   </LinearGradient>
                 ) : (
-                  <View style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: '#09090b', borderWidth: 1, borderColor: '#27272a', borderRadius: 8 }}>
-                    <Text style={{ color: '#a1a1aa', fontWeight: '700', fontSize: 12 }}>{cat}</Text>
+                  <View style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: Colors.dark.background, borderWidth: 1, borderColor: Colors.dark.border, borderRadius: 8 }}>
+                    <Text style={{ color: Colors.dark.mutedForeground, fontWeight: '700', fontSize: 12 }}>{cat}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -98,8 +99,8 @@ export default function EditLogModal({
             value={notes}
             onChangeText={setNotes}
             placeholder="Session notes (optional)..."
-            placeholderTextColor="#71717a"
-            style={{ backgroundColor: '#09090b', color: '#f4f4f5', borderRadius: 10, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: '#27272a' }}
+            placeholderTextColor={Colors.dark.mutedForeground}
+            style={{ backgroundColor: Colors.dark.background, color: Colors.dark.foreground, borderRadius: 10, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: Colors.dark.border }}
           />
 
           <View style={{ flexDirection: 'row', gap: 12 }}>
@@ -110,8 +111,8 @@ export default function EditLogModal({
             )}
 
             <TouchableOpacity onPress={() => onSave(dateStr, hours, workoutType, notes)} style={{ flex: 1, borderRadius: 14, overflow: 'hidden' }}>
-              <LinearGradient colors={['#10b981', '#059669']} style={{ paddingVertical: 14, alignItems: 'center' }}>
-                <Text style={{ color: '#09090b', fontWeight: '800', fontSize: 15 }}>Update Log Entry</Text>
+              <LinearGradient colors={[Colors.brandPrimary, Colors.brandSecondary]} style={{ paddingVertical: 14, alignItems: 'center' }}>
+                <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 15 }}>Update Log Entry</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

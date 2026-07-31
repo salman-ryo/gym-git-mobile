@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, ScrollView, RefreshControl } from 'react-native';
 import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import FilterBar from '@/components/FilterBar';
@@ -8,6 +8,7 @@ import PowerLevelChart from '@/components/PowerLevelChart';
 import DailyCheckInModal from '@/components/modals/DailyCheckInModal';
 import EditLogModal from '@/components/modals/EditLogModal';
 import WeeklyPlanModal from '@/components/modals/WeeklyPlanModal';
+import CyberpunkLoader from '@/components/CyberpunkLoader';
 
 import { useAuth } from '@/lib/auth-context';
 import { fetchGymLogs, fetchDashboardStats, saveGymLog, deleteGymLog } from '@/lib/gym-service';
@@ -15,6 +16,7 @@ import { formatDateKey } from '@/lib/scientific-streak';
 import { GymLog, Stats, WorkoutType } from '@/lib/types';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 export default function DashboardScreen() {
   const { user, updateUserPlan } = useAuth();
@@ -98,37 +100,37 @@ export default function DashboardScreen() {
   };
 
   return (
-    <LinearGradient colors={['#09090b', '#0c0f17', '#09090b']} style={{ flex: 1 }}>
+    <LinearGradient colors={[Colors.dark.background, '#0c0f17', Colors.dark.background]} style={{ flex: 1 }}>
       <Header currentStreak={stats?.currentStreak || 0} />
 
-      <ScrollView
-        contentContainerStyle={{ padding: 16 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#818cf8" />}
-      >
-        {loading ? (
-          <ActivityIndicator size="large" color="#818cf8" style={{ marginTop: 40 }} />
-        ) : (
-          <>
-            <StatsOverview stats={stats} />
-            <FilterBar
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-              weeklyPlan={user?.weeklyPlan}
-              onOpenPlanModal={() => setShowPlanModal(true)}
-              availableTypes={Array.from(new Set(logs.map((l) => l.workoutType)))}
-            />
-            <ContributionGraph
-              logs={logs}
-              activeFilter={activeFilter}
-              onTileClick={(date, log) => {
-                setEditTileDate(date);
-                setEditTileLog(log);
-              }}
-            />
-            {stats?.monthlyData && <PowerLevelChart monthlyData={stats.monthlyData} logs={logs} />}
-          </>
-        )}
-      </ScrollView>
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <CyberpunkLoader text="Loading Dashboard..." />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={{ padding: 16 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.brandPrimary} />}
+        >
+          <StatsOverview stats={stats} />
+          <FilterBar
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            weeklyPlan={user?.weeklyPlan}
+            onOpenPlanModal={() => setShowPlanModal(true)}
+            availableTypes={Array.from(new Set(logs.map((l) => l.workoutType)))}
+          />
+          <ContributionGraph
+            logs={logs}
+            activeFilter={activeFilter}
+            onTileClick={(date, log) => {
+              setEditTileDate(date);
+              setEditTileLog(log);
+            }}
+          />
+          {stats?.monthlyData && <PowerLevelChart monthlyData={stats.monthlyData} logs={logs} />}
+        </ScrollView>
+      )}
 
       <DailyCheckInModal
         dateStr={todayStr}

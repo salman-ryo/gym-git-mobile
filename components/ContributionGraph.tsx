@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { GymLog, TimeframeView, WorkoutType } from '@/lib/types';
 import { formatDateKey } from '@/lib/scientific-streak';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 interface ContributionGraphProps {
   logs: GymLog[];
@@ -96,16 +97,16 @@ const THEMES = [
 
 const getThemeForWorkout = (type: string) => {
   const defaultTheme = {
-    tile: '#818cf8',
-    border: '#6366f1',
-    pill: '#6366f1',
-    pillText: '#09090b',
-    text: '#818cf8',
-    todayRing: '#818cf8',
-    todayDot: '#818cf8',
-    pillWeek: 'rgba(129,140,248,0.1)',
-    pillWeekBorder: 'rgba(129,140,248,0.4)',
-    barColors: ['#818cf8', '#6366f1'] as [string, string],
+    tile: Colors.brandPrimary,
+    border: Colors.brandSecondary,
+    pill: Colors.brandSecondary,
+    pillText: Colors.dark.primaryForeground,
+    text: Colors.brandPrimary,
+    todayRing: Colors.brandPrimary,
+    todayDot: Colors.brandPrimary,
+    pillWeek: 'rgba(52, 211, 153, 0.1)',
+    pillWeekBorder: 'rgba(52, 211, 153, 0.4)',
+    barColors: [Colors.brandPrimary, Colors.brandSecondary] as [string, string],
   };
 
   if (!type || type === 'All') return defaultTheme;
@@ -322,21 +323,21 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
 
   return (
     <LinearGradient
-      colors={['#18181b', '#0f172a']}
+      colors={[Colors.dark.card, Colors.dark.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ padding: 16, borderRadius: 24, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(129, 140, 248, 0.2)' }}
+      style={{ padding: 16, borderRadius: 24, marginBottom: 16, borderWidth: 1, borderColor: Colors.dark.border }}
     >
       {/* Cyberpunk Header Layout */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <View style={{ flex: 1, marginRight: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-            <View style={{ width: 6, height: 6, backgroundColor: '#818cf8', transform: [{ rotate: '45deg' }] }} />
-            <Text style={{ color: '#818cf8', fontWeight: '900', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            <View style={{ width: 6, height: 6, backgroundColor: Colors.brandPrimary, transform: [{ rotate: '45deg' }] }} />
+            <Text style={{ color: Colors.brandPrimary, fontWeight: '900', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5 }}>
               Activity Grid
             </Text>
           </View>
-          <Text style={{ color: '#a1a1aa', fontSize: 9, fontWeight: '600' }}>
+          <Text style={{ color: Colors.dark.mutedForeground, fontSize: 9, fontWeight: '600' }}>
             {timeframe === 'year' && `${yearData.totalWorkouts} sessions (${yearData.totalHours} hrs) in 365 Days`}
             {timeframe === 'month' && `${monthData.totalWorkouts} sessions (${monthData.totalHours} hrs) in ${monthData.monthName}`}
             {timeframe === 'week' && `${weekData.totalWorkouts} sessions (${weekData.totalHours} hrs) Current Week`}
@@ -344,7 +345,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
         </View>
 
         {/* Timeframe selector pills */}
-        <View style={{ flexDirection: 'row', backgroundColor: '#09090b', padding: 3, borderRadius: 20, borderWidth: 1, borderColor: '#27272a' }}>
+        <View style={{ flexDirection: 'row', backgroundColor: Colors.dark.background, padding: 3, borderRadius: 20, borderWidth: 1, borderColor: Colors.dark.border }}>
           {(['year', 'month', 'week'] as TimeframeView[]).map((mode) => {
             const isActive = timeframe === mode;
             const label = mode === 'year' ? '365d' : mode === 'month' ? 'Month' : 'Week';
@@ -357,10 +358,10 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                   paddingHorizontal: 12,
                   paddingVertical: 5,
                   borderRadius: 16,
-                  backgroundColor: isActive ? '#818cf8' : 'transparent',
+                  backgroundColor: isActive ? Colors.brandPrimary : 'transparent',
                 }}
               >
-                <Text style={{ fontSize: 10, fontWeight: '800', color: isActive ? '#09090b' : '#a1a1aa' }}>
+                <Text style={{ fontSize: 10, fontWeight: '800', color: isActive ? Colors.dark.primaryForeground : Colors.dark.mutedForeground }}>
                   {label}
                 </Text>
               </TouchableOpacity>
@@ -457,16 +458,16 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                     backgroundColor: day.isFuture
                       ? 'rgba(24, 24, 27, 0.4)'
                       : day.hours > 0
-                      ? 'rgba(129, 140, 248, 0.05)'
-                      : '#09090b',
+                      ? 'rgba(52, 211, 153, 0.05)'
+                      : Colors.dark.background,
                     borderWidth: day.isToday ? 1.5 : 1,
                     borderColor: day.isToday
                       ? theme.todayRing
                       : day.isFuture
                       ? 'rgba(39, 39, 42, 0.2)'
                       : day.hours > 0
-                      ? 'rgba(129, 140, 248, 0.3)'
-                      : '#27272a',
+                      ? 'rgba(52, 211, 153, 0.3)'
+                      : Colors.dark.border,
                     opacity: day.isFuture ? 0.3 : isFilteredOut ? 0.3 : 1.0,
                     justifyContent: 'space-between',
                   }}
@@ -519,12 +520,12 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                   backgroundColor: day.isFuture
                     ? 'rgba(24, 24, 27, 0.4)'
                     : day.hours > 0
-                    ? 'rgba(129, 140, 248, 0.05)'
-                    : '#09090b',
+                    ? 'rgba(52, 211, 153, 0.05)'
+                    : Colors.dark.background,
                   borderRadius: 16,
                   padding: 12,
                   borderWidth: day.isToday ? 1.5 : 1,
-                  borderColor: day.isToday ? theme.todayRing : '#27272a',
+                  borderColor: day.isToday ? theme.todayRing : Colors.dark.border,
                   opacity: day.isFuture ? 0.35 : isFilteredOut ? 0.35 : 1,
                   overflow: 'hidden',
                 }}

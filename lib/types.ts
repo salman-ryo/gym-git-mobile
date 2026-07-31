@@ -48,7 +48,7 @@ export interface AnimePower {
   id: string;
   name: string;
   image: any;
-  power: number;
+  minPower: number;
   description?: string;
 }
 
