@@ -7,6 +7,30 @@ export function formatDateKey(date: Date): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+/**
+ * "2026-08-01" → "Friday, August 1, 2026"
+ */
+export function formatDisplayDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  });
+}
+
+/**
+ * "2026-08-01" → "Aug 1"
+ */
+export function formatShortDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+
 export function calculateScientificStreak(logs: GymLog[], plan?: WeeklyPlan): StreakAnalysis {
   let targetDaysPerWeek = 4;
   if (plan?.categories) {

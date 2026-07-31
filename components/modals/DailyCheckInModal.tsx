@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput } from 'react-native';
 import { WorkoutType } from '@/lib/types';
+import { formatDisplayDate } from '@/lib/scientific-streak';
 import { Dumbbell } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
@@ -45,7 +46,7 @@ export default function DailyCheckInModal({
                 <Dumbbell size={30} color={Colors.dark.primaryForeground} />
               </LinearGradient>
               <Text style={{ color: Colors.dark.foreground, fontSize: 22, fontWeight: '900', textAlign: 'center' }}>Did you hit the gym today?</Text>
-              <Text style={{ color: Colors.dark.mutedForeground, fontSize: 13, marginTop: 4, marginBottom: 24, textAlign: 'center' }}>{dateStr}</Text>
+              <Text style={{ color: Colors.dark.mutedForeground, fontSize: 13, marginTop: 4, marginBottom: 24, textAlign: 'center' }}>{formatDisplayDate(dateStr)}</Text>
 
               <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
                 <TouchableOpacity onPress={() => setAnsweredYes(true)} style={{ flex: 1, borderRadius: 14, overflow: 'hidden' }}>

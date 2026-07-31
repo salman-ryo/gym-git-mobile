@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { WorkoutType, WeeklyPlan } from '@/lib/types';
-import { SlidersHorizontal, Settings2 } from 'lucide-react-native';
+import { SlidersHorizontal } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
 
@@ -9,7 +9,6 @@ interface FilterBarProps {
   activeFilter: WorkoutType | 'All';
   onFilterChange: (filter: WorkoutType | 'All') => void;
   weeklyPlan?: WeeklyPlan;
-  onOpenPlanModal?: () => void;
   availableTypes?: string[];
 }
 
@@ -17,7 +16,6 @@ export default function FilterBar({
   activeFilter,
   onFilterChange,
   weeklyPlan,
-  onOpenPlanModal,
   availableTypes = [],
 }: FilterBarProps) {
   const planCategories = weeklyPlan?.categories || ['Push', 'Pull', 'Legs', 'Cardio', 'Custom'];
@@ -34,17 +32,9 @@ export default function FilterBar({
       end={{ x: 1, y: 1 }}
       style={{ padding: 14, borderRadius: 20, marginBottom: 16, borderWidth: 1, borderColor: Colors.dark.border }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <SlidersHorizontal size={14} color={Colors.brandPrimary} />
-          <Text style={{ color: Colors.dark.foreground, fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>Filter Activity</Text>
-        </View>
-        {onOpenPlanModal && (
-          <TouchableOpacity onPress={onOpenPlanModal} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.dark.secondary, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
-            <Settings2 size={12} color={Colors.brandPrimary} />
-            <Text style={{ color: Colors.brandPrimary, fontSize: 11, fontWeight: '700' }}>Plan Split</Text>
-          </TouchableOpacity>
-        )}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+        <SlidersHorizontal size={14} color={Colors.brandPrimary} />
+        <Text style={{ color: Colors.dark.foreground, fontSize: 12, fontWeight: '700', textTransform: 'uppercase' }}>Filter Activity</Text>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>

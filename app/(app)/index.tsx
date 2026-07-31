@@ -115,7 +115,6 @@ export default function DashboardScreen() {
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
             weeklyPlan={user?.weeklyPlan}
-            onOpenPlanModal={() => setShowPlanModal(true)}
             availableTypes={Array.from(new Set(logs.map((l) => l.workoutType)))}
           />
           <ContributionGraph

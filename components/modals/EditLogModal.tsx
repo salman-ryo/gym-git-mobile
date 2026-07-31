@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput } from 'react-native';
 import { GymLog, WorkoutType } from '@/lib/types';
+import { formatDisplayDate } from '@/lib/scientific-streak';
 import { Trash2, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
@@ -51,8 +52,11 @@ export default function EditLogModal({
           end={{ x: 1, y: 1 }}
           style={{ borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(52,211,153,0.3)' }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <Text style={{ color: Colors.dark.foreground, fontSize: 18, fontWeight: '800' }}>Edit Log: {dateStr}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+            <View>
+              <Text style={{ color: Colors.dark.foreground, fontSize: 18, fontWeight: '800' }}>Edit Log</Text>
+              <Text style={{ color: Colors.dark.mutedForeground, fontSize: 12, fontWeight: '600', marginTop: 2 }}>{formatDisplayDate(dateStr)}</Text>
+            </View>
             <TouchableOpacity onPress={onClose}>
               <X size={20} color={Colors.dark.mutedForeground} />
             </TouchableOpacity>

@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { GymLog, TimeframeView, WorkoutType } from '@/lib/types';
-import { formatDateKey } from '@/lib/scientific-streak';
+import { formatDateKey, formatShortDate } from '@/lib/scientific-streak';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
 
@@ -132,6 +132,22 @@ const getTileBgColor = (hours: number): string => {
 
 export default function ContributionGraph({ logs, activeFilter, onTileClick }: ContributionGraphProps) {
   const [timeframe, setTimeframe] = useState<TimeframeView>('year');
+
+  // Refs for auto-scroll
+  const yearScrollRef = useRef<ScrollView>(null);
+  const monthScrollRef = useRef<ScrollView>(null);
+
+  // Pulse animation for today highlight in week view
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.06, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1.0,  duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [pulseAnim]);
 
   const logMap = useMemo(() => {
     const map = new Map<string, GymLog>();
@@ -372,7 +388,15 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
 
       {/* 365 Days Grid View */}
       {timeframe === 'year' && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          ref={yearScrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onLayout={() => {
+            // Scroll to the rightmost column (today) after layout
+            yearScrollRef.current?.scrollToEnd({ animated: false });
+          }}
+        >
           <View style={{ flexDirection: 'row', gap: 4 }}>
             {yearData.weeks.map((week) => (
               <View key={week.weekIndex} style={{ gap: 4 }}>
@@ -409,6 +433,20 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
 
       {/* Month View (Full Calendar Grid) */}
       {timeframe === 'month' && (
+        <ScrollView
+          ref={monthScrollRef}
+          showsVerticalScrollIndicator={false}
+          onLayout={() => {
+            // Scroll so today's row is visible: each row is ~(cellSize + gap)
+            // today is day N, find which row it's in (0-indexed)
+            const todayNum = new Date().getDate();
+            const rowIndex = Math.floor((monthData.startPadding + todayNum - 1) / 7);
+            // Approx row height: weekday header (~20) + cells (~48 each) + gaps (8px)
+            const rowH = 48 + 8;
+            const offset = Math.max(0, rowIndex * rowH - rowH); // scroll a row above today
+            monthScrollRef.current?.scrollTo({ y: offset, animated: false });
+          }}
+        >
         <View style={{ gap: 8, marginTop: 8 }}>
           {/* Weekday Labels */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}>
@@ -499,6 +537,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
             })}
           </View>
         </View>
+        </ScrollView>
       )}
 
       {/* Week View (Vertical Card Stack) */}
@@ -511,9 +550,14 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
               ? getThemeForWorkout(day.workoutType)
               : getThemeForWorkout('All');
 
+            const isToday = day.isToday;
+
             return (
-              <TouchableOpacity
+              <Animated.View
                 key={day.dateStr}
+                style={isToday ? { transform: [{ scale: pulseAnim }] } : undefined}
+              >
+              <TouchableOpacity
                 disabled={day.isFuture}
                 onPress={() => onTileClick(day.dateStr, day.log)}
                 style={{
@@ -524,16 +568,16 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                     : Colors.dark.background,
                   borderRadius: 16,
                   padding: 12,
-                  borderWidth: day.isToday ? 1.5 : 1,
-                  borderColor: day.isToday ? theme.todayRing : Colors.dark.border,
+                  borderWidth: isToday ? 2 : 1,
+                  borderColor: isToday ? theme.todayRing : Colors.dark.border,
                   opacity: day.isFuture ? 0.35 : isFilteredOut ? 0.35 : 1,
                   overflow: 'hidden',
                 }}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
-                    <Text style={{ fontSize: 10, fontWeight: '800', color: day.isToday ? theme.text : '#71717a', textTransform: 'uppercase' }}>
-                      {dayName} • {day.dateStr.slice(5)}
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: isToday ? theme.text : '#71717a', textTransform: 'uppercase' }}>
+                      {dayName} • {formatShortDate(day.dateStr)}{isToday ? ' — TODAY' : ''}
                     </Text>
                     <Text style={{ fontSize: 18, fontWeight: '900', color: day.hours > 0 ? '#f4f4f5' : '#52525b', marginTop: 2 }}>
                       {day.hours > 0 ? `${day.hours} Hours` : 'REST DAY'}
@@ -564,6 +608,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                   </View>
                 )}
               </TouchableOpacity>
+              </Animated.View>
             );
           })}
         </View>

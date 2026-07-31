@@ -107,73 +107,107 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
   return (
     <>
       {/* ── Top Bar ────────────────────────────────── */}
-      <LinearGradient
-        colors={[Colors.dark.background, Colors.dark.card]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <View
         style={{
           paddingTop: STATUS_BAR_HEIGHT + 10,
-          paddingBottom: 14,
-          paddingHorizontal: 20,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          paddingBottom: 16,
+          overflow: 'hidden',
           borderBottomWidth: 1,
           borderBottomColor: Colors.dark.border,
         }}
       >
-        {/* Left: Greeting */}
-        <View>
-          <Text style={{ color: Colors.dark.mutedForeground, fontSize: 12, fontWeight: '600' }}>
-            Welcome back,
-          </Text>
-          <Text style={{ color: Colors.dark.foreground, fontSize: 20, fontWeight: '900', letterSpacing: -0.4 }}>
-            {firstName} 👊
-          </Text>
-        </View>
+        {/* Background gradient */}
+        <LinearGradient
+          colors={[Colors.dark.background, Colors.dark.card]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        />
 
-        {/* Right: streak pill + hamburger */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          {streak > 0 && (
-            <LinearGradient
-              colors={['rgba(245,158,11,0.18)', 'rgba(245,158,11,0.06)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+        {/* Watermark — dumbbell top-right */}
+        <Image
+          source={require('@/assets/images/ggdumbell.webp')}
+          style={{
+            position: 'absolute',
+            top: -10,
+            right: -20,
+            width: 120,
+            height: 120,
+            opacity: 0.07,
+            transform: [{ rotate: '-15deg' }],
+          }}
+          resizeMode="contain"
+        />
+        {/* Watermark — git tree bottom-left */}
+        <Image
+          source={require('@/assets/images/gggit.webp')}
+          style={{
+            position: 'absolute',
+            bottom: -20,
+            left: -10,
+            width: 100,
+            height: 100,
+            opacity: 0.07,
+            transform: [{ rotate: '10deg' }],
+          }}
+          resizeMode="contain"
+        />
+
+        {/* Content row */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
+          {/* Left: Greeting */}
+          <View>
+            <Text style={{ color: Colors.dark.mutedForeground, fontSize: 12, fontWeight: '600' }}>
+              Welcome back,
+            </Text>
+            <Text style={{ color: Colors.dark.foreground, fontSize: 22, fontWeight: '900', letterSpacing: -0.5 }}>
+              {firstName} 👊
+            </Text>
+          </View>
+
+          {/* Right: streak pill + hamburger */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            {streak > 0 && (
+              <LinearGradient
+                colors={['rgba(245,158,11,0.22)', 'rgba(245,158,11,0.08)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(245,158,11,0.4)',
+                }}
+              >
+                <Flame size={14} color="#f59e0b" />
+                <Text style={{ color: '#fbbf24', fontWeight: '800', fontSize: 13 }}>
+                  {streak}
+                </Text>
+              </LinearGradient>
+            )}
+
+            <TouchableOpacity
+              onPress={openDrawer}
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 20,
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                backgroundColor: 'rgba(38,38,38,0.8)',
                 borderWidth: 1,
-                borderColor: 'rgba(245,158,11,0.35)',
+                borderColor: Colors.dark.border,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Flame size={14} color="#f59e0b" />
-              <Text style={{ color: '#fbbf24', fontWeight: '800', fontSize: 13 }}>
-                {streak}
-              </Text>
-            </LinearGradient>
-          )}
-
-          <TouchableOpacity
-            onPress={openDrawer}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 12,
-              backgroundColor: Colors.dark.secondary,
-              borderWidth: 1,
-              borderColor: Colors.dark.border,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Menu size={20} color={Colors.dark.foreground} />
-          </TouchableOpacity>
+              <Menu size={20} color={Colors.dark.foreground} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </LinearGradient>
+      </View>
 
       {/* ── Drawer Overlay + Panel ──────────────────── */}
       {drawerOpen && (
@@ -222,24 +256,39 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ padding: 20, paddingBottom: 48 }}
               >
-                {/* Close button */}
-                <TouchableOpacity
-                  onPress={closeDrawer}
-                  style={{
-                    alignSelf: 'flex-end',
-                    width: 36,
-                    height: 36,
-                    borderRadius: 10,
-                    backgroundColor: Colors.dark.secondary,
-                    borderWidth: 1,
-                    borderColor: Colors.dark.border,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 20,
-                  }}
-                >
-                  <X size={18} color={Colors.dark.mutedForeground} />
-                </TouchableOpacity>
+                {/* ── Drawer header: logo + app name + close ── */}
+                <View style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 24,
+                }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Image
+                      source={require('@/assets/images/logo.png')}
+                      style={{ width: 38, height: 38, borderRadius: 12 }}
+                    />
+                    <View>
+                      <Text style={{ color: Colors.dark.foreground, fontSize: 17, fontWeight: '900', letterSpacing: -0.4 }}>Gym-Git</Text>
+                      <Text style={{ color: Colors.dark.mutedForeground, fontSize: 10, fontWeight: '600' }}>Commit your workouts</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={closeDrawer}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      backgroundColor: Colors.dark.secondary,
+                      borderWidth: 1,
+                      borderColor: Colors.dark.border,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <X size={18} color={Colors.dark.mutedForeground} />
+                  </TouchableOpacity>
+                </View>
 
                 {/* ── User Profile ─────────────────────── */}
                 <LinearGradient
