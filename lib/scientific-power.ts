@@ -1,6 +1,8 @@
 import { animePowerLevels } from '@/assets/anime';
 import { GymLog, PowerScoreBreakdown } from './types';
 
+export type { PowerScoreBreakdown };
+
 export function calculateScientificPowerScore(
   logs: GymLog[],
   periodTotalDays: number,

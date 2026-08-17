@@ -135,7 +135,7 @@ export default function LoginScreen() {
 
           {/* Google OAuth Button */}
           <TouchableOpacity
-            onPress={loginWithGoogle}
+            onPress={() => loginWithGoogle()}
             style={{ backgroundColor: 'rgba(38,38,38,0.6)', paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(63,63,70,0.6)' }}
           >
             <Text style={{ color: '#ffffff', fontWeight: '700', fontSize: 14 }}>Continue with Google</Text>

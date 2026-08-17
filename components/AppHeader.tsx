@@ -28,6 +28,8 @@ import {
   CalendarDays,
   Settings2,
   ChevronRight,
+  Package,
+  Snowflake,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import WeeklyPlanModal from '@/components/modals/WeeklyPlanModal';
@@ -39,9 +41,16 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight ??
 interface AppHeaderProps {
   stats?: Stats | null;
   onPlanSaved?: () => void;
+  onOpenInventory?: () => void;
+  inventoryCount?: number;
 }
 
-export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
+export default function AppHeader({
+  stats,
+  onPlanSaved,
+  onOpenInventory,
+  inventoryCount = 0,
+}: AppHeaderProps) {
   const { user, logout, updateUserPlan } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
@@ -102,6 +111,7 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
 
   const firstName = user?.name?.split(' ')[0] ?? 'Athlete';
   const streak = stats?.currentStreak ?? 0;
+  const isFrozen = !!stats?.isFrozen;
   const scientificStreak = stats?.scientificStreak;
 
   return (
@@ -140,7 +150,6 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
         <Image source={require('@/assets/images/gggit.webp')} resizeMode="contain"
           style={{ position: 'absolute', bottom: -4, left: 140, width: 60, height: 60, opacity: 0.04, transform: [{ rotate: '30deg' }] }} />
 
-
         {/* Content row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
           {/* Left: Greeting */}
@@ -153,11 +162,59 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
             </Text>
           </View>
 
-          {/* Right: streak pill + hamburger */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {/* Right: inventory bag + streak pill + hamburger */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {/* Inventory Bag Button */}
+            {onOpenInventory && (
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onOpenInventory();
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(34,211,238,0.1)',
+                  borderWidth: 1,
+                  borderColor: 'rgba(34,211,238,0.35)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                }}
+              >
+                <Package size={18} color={Colors.neonCyan} />
+                {inventoryCount > 0 && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: -4,
+                      right: -4,
+                      backgroundColor: Colors.neonCyan,
+                      borderRadius: 9,
+                      minWidth: 18,
+                      height: 18,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingHorizontal: 3,
+                    }}
+                  >
+                    <Text style={{ color: '#060a0e', fontSize: 10, fontWeight: '900' }}>
+                      {inventoryCount}
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            )}
+
+            {/* Streak Pill */}
             {streak > 0 && (
               <LinearGradient
-                colors={['rgba(245,158,11,0.22)', 'rgba(245,158,11,0.08)']}
+                colors={
+                  isFrozen
+                    ? ['rgba(56,189,248,0.25)', 'rgba(56,189,248,0.08)']
+                    : ['rgba(0,255,136,0.22)', 'rgba(0,255,136,0.08)']
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={{
@@ -168,16 +225,27 @@ export default function AppHeader({ stats, onPlanSaved }: AppHeaderProps) {
                   paddingVertical: 6,
                   borderRadius: 20,
                   borderWidth: 1,
-                  borderColor: 'rgba(245,158,11,0.4)',
+                  borderColor: isFrozen ? 'rgba(56,189,248,0.4)' : 'rgba(0,255,136,0.4)',
                 }}
               >
-                <Flame size={14} color="#f59e0b" />
-                <Text style={{ color: '#fbbf24', fontWeight: '800', fontSize: 13 }}>
+                {isFrozen ? (
+                  <Snowflake size={14} color={Colors.iceFrost} />
+                ) : (
+                  <Flame size={14} color={Colors.neonGreen} />
+                )}
+                <Text
+                  style={{
+                    color: isFrozen ? Colors.iceFrost : Colors.neonGreen,
+                    fontWeight: '800',
+                    fontSize: 13,
+                  }}
+                >
                   {streak}
                 </Text>
               </LinearGradient>
             )}
 
+            {/* Menu Hamburger */}
             <TouchableOpacity
               onPress={openDrawer}
               style={{

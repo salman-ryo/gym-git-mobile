@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated, StyleSheet } from 'react-native';
 import { GymLog, TimeframeView, WorkoutType } from '@/lib/types';
 import { formatDateKey, formatShortDate } from '@/lib/scientific-streak';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,124 +27,33 @@ interface WeekColumn {
   days: DayTile[];
 }
 
-const THEMES = [
-  {
-    name: 'sky',
-    tile: '#38bdf8',
-    border: '#0284c7',
-    pill: '#0284c7',
-    pillText: '#09090b',
-    text: '#38bdf8',
-    todayRing: '#38bdf8',
-    todayDot: '#38bdf8',
-    pillWeek: 'rgba(56,189,248,0.1)',
-    pillWeekBorder: 'rgba(56,189,248,0.4)',
-    barColors: ['#38bdf8', '#0284c7'] as [string, string],
-  },
-  {
-    name: 'purple',
-    tile: '#c084fc',
-    border: '#7e22ce',
-    pill: '#7e22ce',
-    pillText: '#09090b',
-    text: '#c084fc',
-    todayRing: '#c084fc',
-    todayDot: '#c084fc',
-    pillWeek: 'rgba(192,132,252,0.1)',
-    pillWeekBorder: 'rgba(192,132,252,0.4)',
-    barColors: ['#c084fc', '#7e22ce'] as [string, string],
-  },
-  {
-    name: 'rose',
-    tile: '#fb7185',
-    border: '#be123c',
-    pill: '#be123c',
-    pillText: '#09090b',
-    text: '#fb7185',
-    todayRing: '#fb7185',
-    todayDot: '#fb7185',
-    pillWeek: 'rgba(251,113,133,0.1)',
-    pillWeekBorder: 'rgba(251,113,133,0.4)',
-    barColors: ['#fb7185', '#be123c'] as [string, string],
-  },
-  {
-    name: 'amber',
-    tile: '#fbbf24',
-    border: '#b45309',
-    pill: '#b45309',
-    pillText: '#09090b',
-    text: '#fbbf24',
-    todayRing: '#fbbf24',
-    todayDot: '#fbbf24',
-    pillWeek: 'rgba(251,191,36,0.1)',
-    pillWeekBorder: 'rgba(251,191,36,0.4)',
-    barColors: ['#fbbf24', '#b45309'] as [string, string],
-  },
-  {
-    name: 'cyan',
-    tile: '#22d3ee',
-    border: '#0891b2',
-    pill: '#0891b2',
-    pillText: '#09090b',
-    text: '#22d3ee',
-    todayRing: '#22d3ee',
-    todayDot: '#22d3ee',
-    pillWeek: 'rgba(34,211,238,0.1)',
-    pillWeekBorder: 'rgba(34,211,238,0.4)',
-    barColors: ['#22d3ee', '#0891b2'] as [string, string],
+const getTileBgColor = (hours: number, workoutType?: string): string => {
+  if (workoutType && (workoutType.toLowerCase() === 'freeze' || workoutType.toLowerCase() === 'frozen')) {
+    return Colors.iceFrost;
   }
-];
-
-const getThemeForWorkout = (type: string) => {
-  const defaultTheme = {
-    tile: Colors.brandPrimary,
-    border: Colors.brandSecondary,
-    pill: Colors.brandSecondary,
-    pillText: Colors.dark.primaryForeground,
-    text: Colors.brandPrimary,
-    todayRing: Colors.brandPrimary,
-    todayDot: Colors.brandPrimary,
-    pillWeek: 'rgba(52, 211, 153, 0.1)',
-    pillWeekBorder: 'rgba(52, 211, 153, 0.4)',
-    barColors: [Colors.brandPrimary, Colors.brandSecondary] as [string, string],
-  };
-
-  if (!type || type === 'All') return defaultTheme;
-
-  let hash = 0;
-  for (let i = 0; i < type.length; i++) {
-    hash = type.charCodeAt(i) + ((hash << 5) - hash);
+  if (workoutType && workoutType.toLowerCase() === 'rest') {
+    return Colors.slateRest;
   }
-  const index = Math.abs(hash) % THEMES.length;
-  return THEMES[index];
-};
-
-const getTileBgColor = (hours: number): string => {
-  if (hours <= 0) return '#27272a'; // zinc-800
-  if (hours < 0.5) return '#052e16'; // green-950
-  if (hours < 1.0) return '#166534'; // green-800
-  if (hours < 1.5) return '#16a34a'; // green-600
-  if (hours < 2.0) return '#4ade80'; // green-400
-  if (hours < 2.6) return '#c084fc'; // purple-400
-  if (hours >= 3.0) return '#fbbf24'; // amber-400
-  return '#4ade80';
+  if (hours <= 0) return '#18181b';
+  if (hours < 0.75) return '#14532d'; // Level 1
+  if (hours < 1.25) return '#166534'; // Level 2
+  if (hours < 2.0) return '#22c55e';  // Level 3
+  return '#00ff88';                  // Level 4 (Peak)
 };
 
 export default function ContributionGraph({ logs, activeFilter, onTileClick }: ContributionGraphProps) {
   const [timeframe, setTimeframe] = useState<TimeframeView>('year');
 
-  // Refs for auto-scroll
   const yearScrollRef = useRef<ScrollView>(null);
   const monthScrollRef = useRef<ScrollView>(null);
 
-  // Pulse animation for today highlight in week view
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.06, duration: 900, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 1.0,  duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1.0, duration: 900, useNativeDriver: true }),
       ])
     ).start();
   }, [pulseAnim]);
@@ -342,18 +251,18 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
       colors={[Colors.dark.card, Colors.dark.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ padding: 16, borderRadius: 24, marginBottom: 16, borderWidth: 1, borderColor: Colors.dark.border }}
+      style={styles.cardContainer}
     >
       {/* Cyberpunk Header Layout */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <View style={{ flex: 1, marginRight: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-            <View style={{ width: 6, height: 6, backgroundColor: Colors.brandPrimary, transform: [{ rotate: '45deg' }] }} />
-            <Text style={{ color: Colors.brandPrimary, fontWeight: '900', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5 }}>
-              Activity Grid
+      <View style={styles.headerRow}>
+        <View style={styles.headerLeft}>
+          <View style={styles.headerTitleRow}>
+            <View style={styles.diamondAccent} />
+            <Text style={styles.headerTitleText}>
+              ACTIVITY HEATMAP
             </Text>
           </View>
-          <Text style={{ color: Colors.dark.mutedForeground, fontSize: 9, fontWeight: '600' }}>
+          <Text style={styles.headerSubtitleText}>
             {timeframe === 'year' && `${yearData.totalWorkouts} sessions (${yearData.totalHours} hrs) in 365 Days`}
             {timeframe === 'month' && `${monthData.totalWorkouts} sessions (${monthData.totalHours} hrs) in ${monthData.monthName}`}
             {timeframe === 'week' && `${weekData.totalWorkouts} sessions (${weekData.totalHours} hrs) Current Week`}
@@ -361,7 +270,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
         </View>
 
         {/* Timeframe selector pills */}
-        <View style={{ flexDirection: 'row', backgroundColor: Colors.dark.background, padding: 3, borderRadius: 20, borderWidth: 1, borderColor: Colors.dark.border }}>
+        <View style={styles.timeframePillsRow}>
           {(['year', 'month', 'week'] as TimeframeView[]).map((mode) => {
             const isActive = timeframe === mode;
             const label = mode === 'year' ? '365d' : mode === 'month' ? 'Month' : 'Week';
@@ -370,14 +279,17 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
               <TouchableOpacity
                 key={mode}
                 onPress={() => setTimeframe(mode)}
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 5,
-                  borderRadius: 16,
-                  backgroundColor: isActive ? Colors.brandPrimary : 'transparent',
-                }}
+                style={[
+                  styles.timeframePill,
+                  isActive && styles.timeframePillActive,
+                ]}
               >
-                <Text style={{ fontSize: 10, fontWeight: '800', color: isActive ? Colors.dark.primaryForeground : Colors.dark.mutedForeground }}>
+                <Text
+                  style={[
+                    styles.timeframePillText,
+                    isActive ? styles.timeframePillTextActive : styles.timeframePillTextInactive,
+                  ]}
+                >
                   {label}
                 </Text>
               </TouchableOpacity>
@@ -393,7 +305,6 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
           horizontal
           showsHorizontalScrollIndicator={false}
           onLayout={() => {
-            // Scroll to the rightmost column (today) after layout
             yearScrollRef.current?.scrollToEnd({ animated: false });
           }}
         >
@@ -402,26 +313,22 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
               <View key={week.weekIndex} style={{ gap: 4 }}>
                 {week.days.map((day) => {
                   const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-                  const isMatchFilter = activeFilter !== 'All' && day.hours > 0 && day.workoutType === activeFilter;
-                  const activeTheme = isMatchFilter ? getThemeForWorkout(activeFilter) : null;
-
-                  let tileColor = getTileBgColor(day.hours);
-                  if (isMatchFilter && activeTheme) tileColor = activeTheme.tile;
+                  const tileColor = getTileBgColor(day.hours, day.workoutType);
 
                   return (
                     <TouchableOpacity
                       key={day.dateStr}
                       disabled={day.isFuture}
                       onPress={() => onTileClick(day.dateStr, day.log)}
-                      style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: 3,
-                        backgroundColor: tileColor,
-                        opacity: day.isFuture ? 0.15 : isFilteredOut ? 0.2 : 1.0,
-                        borderWidth: day.isToday ? 1.5 : 0,
-                        borderColor: '#ffffff',
-                      }}
+                      style={[
+                        styles.yearTile,
+                        {
+                          backgroundColor: tileColor,
+                          opacity: day.isFuture ? 0.15 : isFilteredOut ? 0.2 : 1.0,
+                          borderWidth: day.isToday ? 1.5 : 1,
+                          borderColor: day.isToday ? '#ffffff' : '#27272a',
+                        },
+                      ]}
                     />
                   );
                 })}
@@ -437,106 +344,83 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
           ref={monthScrollRef}
           showsVerticalScrollIndicator={false}
           onLayout={() => {
-            // Scroll so today's row is visible: each row is ~(cellSize + gap)
-            // today is day N, find which row it's in (0-indexed)
             const todayNum = new Date().getDate();
             const rowIndex = Math.floor((monthData.startPadding + todayNum - 1) / 7);
-            // Approx row height: weekday header (~20) + cells (~48 each) + gaps (8px)
             const rowH = 48 + 8;
-            const offset = Math.max(0, rowIndex * rowH - rowH); // scroll a row above today
+            const offset = Math.max(0, rowIndex * rowH - rowH);
             monthScrollRef.current?.scrollTo({ y: offset, animated: false });
           }}
         >
-        <View style={{ gap: 8, marginTop: 8 }}>
-          {/* Weekday Labels */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}>
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
-              <Text key={idx} style={{ width: '12.8%', textAlign: 'center', color: '#71717a', fontSize: 10, fontWeight: '800' }}>
-                {day}
-              </Text>
-            ))}
-          </View>
+          <View style={{ gap: 8, marginTop: 8 }}>
+            {/* Weekday Labels */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}>
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                <Text key={idx} style={styles.monthWeekdayHeader}>
+                  {day}
+                </Text>
+              ))}
+            </View>
 
-          {/* Grid Cells */}
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-            {/* Start padding */}
-            {Array.from({ length: monthData.startPadding }).map((_, i) => (
-              <View
-                key={`pad-${i}`}
-                style={{
-                  width: '12.8%',
-                  aspectRatio: 1,
-                  margin: '0.6%',
-                  backgroundColor: 'rgba(39, 39, 42, 0.15)',
-                  borderWidth: 1,
-                  borderColor: 'rgba(39, 39, 42, 0.2)',
-                  borderRadius: 8,
-                }}
-              />
-            ))}
+            {/* Grid Cells */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+              {Array.from({ length: monthData.startPadding }).map((_, i) => (
+                <View
+                  key={`pad-${i}`}
+                  style={styles.monthPadCell}
+                />
+              ))}
 
-            {/* Days in Month */}
-            {monthData.days.map((day) => {
-              const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-              const theme = (day.hours > 0 && day.workoutType)
-                ? getThemeForWorkout(day.workoutType)
-                : getThemeForWorkout('All');
+              {monthData.days.map((day) => {
+                const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
+                const tileColor = getTileBgColor(day.hours, day.workoutType);
 
-              return (
-                <TouchableOpacity
-                  key={day.dateStr}
-                  disabled={day.isFuture}
-                  onPress={() => onTileClick(day.dateStr, day.log)}
-                  style={{
-                    width: '12.8%',
-                    aspectRatio: 1,
-                    margin: '0.6%',
-                    padding: 3,
-                    borderRadius: 8,
-                    backgroundColor: day.isFuture
-                      ? 'rgba(24, 24, 27, 0.4)'
-                      : day.hours > 0
-                      ? 'rgba(52, 211, 153, 0.05)'
-                      : Colors.dark.background,
-                    borderWidth: day.isToday ? 1.5 : 1,
-                    borderColor: day.isToday
-                      ? theme.todayRing
-                      : day.isFuture
-                      ? 'rgba(39, 39, 42, 0.2)'
-                      : day.hours > 0
-                      ? 'rgba(52, 211, 153, 0.3)'
-                      : Colors.dark.border,
-                    opacity: day.isFuture ? 0.3 : isFilteredOut ? 0.3 : 1.0,
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 9, fontWeight: '900', color: day.isToday ? theme.text : '#a1a1aa' }}>
-                      {day.dayOfMonth}
-                    </Text>
-                    {day.hours > 0 && (
-                      <View style={{ backgroundColor: theme.pill, paddingHorizontal: 3, paddingVertical: 1, borderRadius: 4 }}>
-                        <Text style={{ fontSize: 7, fontWeight: '900', color: theme.pillText }}>
-                          {day.hours}h
-                        </Text>
-                      </View>
+                return (
+                  <TouchableOpacity
+                    key={day.dateStr}
+                    disabled={day.isFuture}
+                    onPress={() => onTileClick(day.dateStr, day.log)}
+                    style={[
+                      styles.monthCell,
+                      {
+                        backgroundColor: day.isFuture
+                          ? 'rgba(24, 24, 27, 0.4)'
+                          : tileColor === '#18181b'
+                          ? Colors.dark.background
+                          : `${tileColor}22`,
+                        borderColor: day.isToday
+                          ? '#ffffff'
+                          : day.hours > 0
+                          ? tileColor
+                          : Colors.dark.border,
+                        opacity: day.isFuture ? 0.3 : isFilteredOut ? 0.3 : 1.0,
+                      },
+                    ]}
+                  >
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text style={{ fontSize: 9, fontWeight: '900', color: day.isToday ? '#ffffff' : '#a1a1aa' }}>
+                        {day.dayOfMonth}
+                      </Text>
+                      {day.hours > 0 && (
+                        <View style={[styles.hourBadge, { backgroundColor: tileColor }]}>
+                          <Text style={styles.hourBadgeText}>{day.hours}h</Text>
+                        </View>
+                      )}
+                    </View>
+
+                    {day.workoutType ? (
+                      <Text numberOfLines={1} style={[styles.monthWorkoutType, { color: tileColor }]}>
+                        {day.workoutType}
+                      </Text>
+                    ) : null}
+
+                    {day.isToday && (
+                      <View style={styles.todayDot} />
                     )}
-                  </View>
-
-                  {day.workoutType ? (
-                    <Text numberOfLines={1} style={{ fontSize: 7, fontWeight: '800', color: theme.text, textTransform: 'uppercase' }}>
-                      {day.workoutType}
-                    </Text>
-                  ) : null}
-
-                  {day.isToday && (
-                    <View style={{ position: 'absolute', bottom: 3, right: 3, width: 4, height: 4, borderRadius: 2, backgroundColor: theme.todayDot }} />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
-        </View>
         </ScrollView>
       )}
 
@@ -546,10 +430,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
           {weekData.days.map((day) => {
             const dayName = day.dateObj.toLocaleDateString('en-US', { weekday: 'short' });
             const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-            const theme = (day.hours > 0 && day.workoutType)
-              ? getThemeForWorkout(day.workoutType)
-              : getThemeForWorkout('All');
-
+            const tileColor = getTileBgColor(day.hours, day.workoutType);
             const isToday = day.isToday;
 
             return (
@@ -557,62 +438,278 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
                 key={day.dateStr}
                 style={isToday ? { transform: [{ scale: pulseAnim }] } : undefined}
               >
-              <TouchableOpacity
-                disabled={day.isFuture}
-                onPress={() => onTileClick(day.dateStr, day.log)}
-                style={{
-                  backgroundColor: day.isFuture
-                    ? 'rgba(24, 24, 27, 0.4)'
-                    : day.hours > 0
-                    ? 'rgba(52, 211, 153, 0.05)'
-                    : Colors.dark.background,
-                  borderRadius: 16,
-                  padding: 12,
-                  borderWidth: isToday ? 2 : 1,
-                  borderColor: isToday ? theme.todayRing : Colors.dark.border,
-                  opacity: day.isFuture ? 0.35 : isFilteredOut ? 0.35 : 1,
-                  overflow: 'hidden',
-                }}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View>
-                    <Text style={{ fontSize: 10, fontWeight: '800', color: isToday ? theme.text : '#71717a', textTransform: 'uppercase' }}>
-                      {dayName} • {formatShortDate(day.dateStr)}{isToday ? ' — TODAY' : ''}
-                    </Text>
-                    <Text style={{ fontSize: 18, fontWeight: '900', color: day.hours > 0 ? '#f4f4f5' : '#52525b', marginTop: 2 }}>
-                      {day.hours > 0 ? `${day.hours} Hours` : 'REST DAY'}
-                    </Text>
-                  </View>
-
-                  {day.workoutType ? (
-                    <View style={{ backgroundColor: theme.pillWeek, borderColor: theme.pillWeekBorder, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-                      <Text style={{ fontSize: 9, fontWeight: '900', color: theme.text, textTransform: 'uppercase' }}>
-                        {day.workoutType}
+                <TouchableOpacity
+                  disabled={day.isFuture}
+                  onPress={() => onTileClick(day.dateStr, day.log)}
+                  style={[
+                    styles.weekCard,
+                    {
+                      backgroundColor: day.isFuture
+                        ? 'rgba(24, 24, 27, 0.4)'
+                        : day.hours > 0
+                        ? 'rgba(0, 255, 136, 0.05)'
+                        : Colors.dark.background,
+                      borderColor: isToday ? Colors.neonGreen : Colors.dark.border,
+                      opacity: day.isFuture ? 0.35 : isFilteredOut ? 0.35 : 1,
+                    },
+                  ]}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View>
+                      <Text style={[styles.weekDayHeader, { color: isToday ? Colors.neonGreen : '#71717a' }]}>
+                        {dayName} • {formatShortDate(day.dateStr)}{isToday ? ' — TODAY' : ''}
+                      </Text>
+                      <Text style={[styles.weekDayValue, { color: day.hours > 0 ? '#f4f4f5' : '#52525b' }]}>
+                        {day.hours > 0
+                          ? `${day.hours} Hours`
+                          : day.workoutType && day.workoutType.toLowerCase() === 'rest'
+                          ? 'Rest Day'
+                          : day.workoutType && (day.workoutType.toLowerCase() === 'freeze' || day.workoutType.toLowerCase() === 'frozen')
+                          ? 'Ice Pause'
+                          : 'No workout logged'}
                       </Text>
                     </View>
-                  ) : (
-                    <Text style={{ fontSize: 10, fontWeight: '700', color: '#52525b', textTransform: 'uppercase' }}>None</Text>
-                  )}
-                </View>
 
-                {/* Progress bar fill for active hours */}
-                {day.hours > 0 && (
-                  <View style={{ height: 4, backgroundColor: '#27272a', borderRadius: 2, marginTop: 10, overflow: 'hidden' }}>
-                    <View
-                      style={{
-                        height: '100%',
-                        backgroundColor: theme.tile,
-                        width: `${Math.min(100, (day.hours / 2.5) * 100)}%`,
-                      }}
-                    />
+                    {day.workoutType ? (
+                      <View style={[styles.weekCategoryPill, { borderColor: tileColor, backgroundColor: `${tileColor}20` }]}>
+                        <Text style={[styles.weekCategoryText, { color: tileColor }]}>
+                          {day.workoutType}
+                        </Text>
+                      </View>
+                    ) : (
+                      <Text style={styles.noneCategoryText}>None</Text>
+                    )}
                   </View>
-                )}
-              </TouchableOpacity>
+
+                  {/* Progress bar fill */}
+                  {day.hours > 0 && (
+                    <View style={styles.weekProgressBar}>
+                      <View
+                        style={{
+                          height: '100%',
+                          backgroundColor: tileColor,
+                          width: `${Math.min(100, (day.hours / 2.5) * 100)}%`,
+                        }}
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
               </Animated.View>
             );
           })}
         </View>
       )}
+
+      {/* Heatmap Legend */}
+      <View style={styles.legendContainer}>
+        <Text style={styles.legendLabel}>Less</Text>
+        <View style={[styles.legendTile, { backgroundColor: '#18181b', borderColor: '#27272a', borderWidth: 1 }]} />
+        <View style={[styles.legendTile, { backgroundColor: '#14532d' }]} />
+        <View style={[styles.legendTile, { backgroundColor: '#166534' }]} />
+        <View style={[styles.legendTile, { backgroundColor: '#22c55e' }]} />
+        <View style={[styles.legendTile, { backgroundColor: '#00ff88' }]} />
+        <Text style={styles.legendLabel}>More</Text>
+
+        <View style={styles.legendSeparator} />
+
+        <View style={[styles.legendTile, { backgroundColor: Colors.slateRest }]} />
+        <Text style={styles.legendLabel}>Rest</Text>
+
+        <View style={[styles.legendTile, { backgroundColor: Colors.iceFrost }]} />
+        <Text style={styles.legendLabel}>Frozen</Text>
+      </View>
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    padding: 16,
+    borderRadius: 24,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  headerLeft: {
+    flex: 1,
+    marginRight: 8,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  diamondAccent: {
+    width: 6,
+    height: 6,
+    backgroundColor: Colors.neonGreen,
+    transform: [{ rotate: '45deg' }],
+  },
+  headerTitleText: {
+    color: Colors.neonGreen,
+    fontWeight: '900',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+  },
+  headerSubtitleText: {
+    color: Colors.dark.mutedForeground,
+    fontSize: 9.5,
+    fontWeight: '600',
+  },
+  timeframePillsRow: {
+    flexDirection: 'row',
+    backgroundColor: Colors.dark.background,
+    padding: 3,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  timeframePill: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+  },
+  timeframePillActive: {
+    backgroundColor: Colors.neonGreen,
+  },
+  timeframePillText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  timeframePillTextActive: {
+    color: '#060a0e',
+  },
+  timeframePillTextInactive: {
+    color: Colors.dark.mutedForeground,
+  },
+  yearTile: {
+    width: 12,
+    height: 12,
+    borderRadius: 3,
+  },
+  monthWeekdayHeader: {
+    width: '12.8%',
+    textAlign: 'center',
+    color: '#71717a',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  monthPadCell: {
+    width: '12.8%',
+    aspectRatio: 1,
+    margin: '0.6%',
+    backgroundColor: 'rgba(39, 39, 42, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(39, 39, 42, 0.2)',
+    borderRadius: 8,
+  },
+  monthCell: {
+    width: '12.8%',
+    aspectRatio: 1,
+    margin: '0.6%',
+    padding: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+    justifyContent: 'space-between',
+    position: 'relative',
+  },
+  hourBadge: {
+    paddingHorizontal: 3,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  hourBadgeText: {
+    fontSize: 7,
+    fontWeight: '900',
+    color: '#060a0e',
+  },
+  monthWorkoutType: {
+    fontSize: 7,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  todayDot: {
+    position: 'absolute',
+    bottom: 3,
+    right: 3,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
+  },
+  weekCard: {
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  weekDayHeader: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  weekDayValue: {
+    fontSize: 18,
+    fontWeight: '900',
+    marginTop: 2,
+  },
+  weekCategoryPill: {
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  weekCategoryText: {
+    fontSize: 9,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  noneCategoryText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#52525b',
+    textTransform: 'uppercase',
+  },
+  weekProgressBar: {
+    height: 4,
+    backgroundColor: '#27272a',
+    borderRadius: 2,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 4,
+    marginTop: 14,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#1a2332',
+  },
+  legendTile: {
+    width: 10,
+    height: 10,
+    borderRadius: 2.5,
+  },
+  legendLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#71717a',
+    marginHorizontal: 2,
+  },
+  legendSeparator: {
+    width: 1,
+    height: 10,
+    backgroundColor: '#27272a',
+    marginHorizontal: 4,
+  },
+});
