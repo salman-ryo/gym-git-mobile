@@ -5,6 +5,7 @@ import { formatDisplayDate } from '@/lib/scientific-streak';
 import { isLateNightStreakRisk, snoozeCheckIn, clearCheckInSnooze } from '@/lib/checkin-snooze';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
+import { getThemeForWorkout } from '@/lib/theme-utils';
 import { Clock, AlertTriangle, ShieldCheck } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
@@ -189,23 +190,26 @@ export default function DailyCheckInModal({
               {/* Workout Type Chips */}
               <Text style={styles.fieldLabel}>Category</Text>
               <View style={styles.categoryRow}>
-                {availableWorkoutTypes.map((cat) => (
-                  <TouchableOpacity
-                    key={cat}
-                    onPress={() => setWorkoutType(cat)}
-                    style={{ borderRadius: 10, overflow: 'hidden' }}
-                  >
-                    {workoutType === cat ? (
-                      <LinearGradient colors={[Colors.brandPrimary, Colors.brandSecondary]} style={{ paddingHorizontal: 14, paddingVertical: 7 }}>
-                        <Text style={styles.activeCategoryText}>{cat}</Text>
-                      </LinearGradient>
-                    ) : (
-                      <View style={styles.inactiveCategoryChip}>
-                        <Text style={styles.inactiveCategoryText}>{cat}</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                ))}
+                {availableWorkoutTypes.map((cat) => {
+                  const theme = getThemeForWorkout(cat);
+                  return (
+                    <TouchableOpacity
+                      key={cat}
+                      onPress={() => setWorkoutType(cat)}
+                      style={{ borderRadius: 10, overflow: 'hidden' }}
+                    >
+                      {workoutType === cat ? (
+                        <LinearGradient colors={[theme.primary, theme.gradient[1]]} style={{ paddingHorizontal: 14, paddingVertical: 7 }}>
+                          <Text style={{ ...styles.activeCategoryText, color: theme.text }}>{cat}</Text>
+                        </LinearGradient>
+                      ) : (
+                        <View style={styles.inactiveCategoryChip}>
+                          <Text style={styles.inactiveCategoryText}>{cat}</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
 
               {/* Notes */}

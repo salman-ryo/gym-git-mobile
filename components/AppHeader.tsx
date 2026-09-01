@@ -155,11 +155,14 @@ export default function AppHeader({
 
         {/* Content row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-          {/* Left: Greeting */}
+          {/* Left: Greeting & Branding */}
           <View>
-            <Text style={{ color: Colors.dark.mutedForeground, fontSize: 12, fontWeight: '600' }}>
-              Welcome back,
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              <Dumbbell size={14} color={Colors.neonGreen} />
+              <Text style={{ color: Colors.neonGreen, fontSize: 12, fontWeight: '900', letterSpacing: 1, textTransform: 'uppercase' }}>
+                Gym-Git
+              </Text>
+            </View>
             <Text style={{ color: Colors.dark.foreground, fontSize: 22, fontWeight: '900', letterSpacing: -0.5 }}>
               {firstName} 👊
             </Text>

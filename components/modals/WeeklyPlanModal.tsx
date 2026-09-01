@@ -4,6 +4,7 @@ import { PREBUILT_PLANS, WeeklyPlan } from '@/lib/types';
 import { Settings2, Check, X, Plus, Calendar, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
+import { getThemeForWorkout } from '@/lib/theme-utils';
 import * as Haptics from 'expo-haptics';
 
 interface WeeklyPlanModalProps {
@@ -136,11 +137,14 @@ export default function WeeklyPlanModal({
 
                   {/* Category Chips */}
                   <View style={styles.categoriesRow}>
-                    {plan.categories.map((c) => (
-                      <View key={c} style={styles.categoryChip}>
-                        <Text style={styles.categoryChipText}>{c}</Text>
-                      </View>
-                    ))}
+                    {plan.categories.map((c) => {
+                      const theme = getThemeForWorkout(c, plan);
+                      return (
+                        <View key={c} style={[styles.categoryChip, { borderColor: theme.glow, backgroundColor: theme.bgLight }]}>
+                          <Text style={[styles.categoryChipText, { color: theme.primary }]}>{c}</Text>
+                        </View>
+                      );
+                    })}
                   </View>
                 </TouchableOpacity>
               );

@@ -4,6 +4,7 @@ import { WorkoutType, WeeklyPlan } from '@/lib/types';
 import { SlidersHorizontal } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
+import { getThemeForWorkout } from '@/lib/theme-utils';
 
 interface FilterBarProps {
   activeFilter: WorkoutType | 'All';
@@ -40,17 +41,18 @@ export default function FilterBar({
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {displayFilterItems.map((item) => {
           const isActive = activeFilter === item.label;
+          const theme = getThemeForWorkout(item.label, weeklyPlan);
 
           if (isActive) {
             return (
               <TouchableOpacity key={item.label} onPress={() => onFilterChange(item.label)}>
                 <LinearGradient
-                  colors={[Colors.brandPrimary, Colors.brandSecondary]}
+                  colors={[theme.primary, theme.gradient[1]]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 10 }}
                 >
-                  <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 12 }}>
+                  <Text style={{ color: theme.text, fontWeight: '800', fontSize: 12 }}>
                     {item.label} {item.isExtra ? '(Past)' : ''}
                   </Text>
                 </LinearGradient>

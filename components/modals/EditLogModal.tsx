@@ -5,6 +5,7 @@ import { formatDisplayDate } from '@/lib/scientific-streak';
 import { Trash2, X, Shield, Sparkles } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '@/constants/Colors';
+import { getThemeForWorkout } from '@/lib/theme-utils';
 import * as Haptics from 'expo-haptics';
 
 interface EditLogModalProps {
@@ -165,19 +166,22 @@ export default function EditLogModal({
           {/* Workout Type Chips */}
           <Text style={styles.fieldLabel}>Category</Text>
           <View style={styles.categoryRow}>
-            {availableWorkoutTypes.map((cat) => (
-              <TouchableOpacity key={cat} onPress={() => setWorkoutType(cat)} style={{ borderRadius: 10, overflow: 'hidden' }}>
-                {workoutType === cat ? (
-                  <LinearGradient colors={[Colors.brandPrimary, Colors.brandSecondary]} style={{ paddingHorizontal: 14, paddingVertical: 7 }}>
-                    <Text style={{ color: Colors.dark.primaryForeground, fontWeight: '800', fontSize: 12 }}>{cat}</Text>
-                  </LinearGradient>
-                ) : (
-                  <View style={styles.categoryChipInactive}>
-                    <Text style={{ color: Colors.dark.mutedForeground, fontWeight: '700', fontSize: 12 }}>{cat}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            ))}
+            {availableWorkoutTypes.map((cat) => {
+              const theme = getThemeForWorkout(cat);
+              return (
+                <TouchableOpacity key={cat} onPress={() => setWorkoutType(cat)} style={{ borderRadius: 10, overflow: 'hidden' }}>
+                  {workoutType === cat ? (
+                    <LinearGradient colors={[theme.primary, theme.gradient[1]]} style={{ paddingHorizontal: 14, paddingVertical: 7 }}>
+                      <Text style={{ color: theme.text, fontWeight: '800', fontSize: 12 }}>{cat}</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={styles.categoryChipInactive}>
+                      <Text style={{ color: Colors.dark.mutedForeground, fontWeight: '700', fontSize: 12 }}>{cat}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* Notes */}

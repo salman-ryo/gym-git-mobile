@@ -177,6 +177,7 @@ export default function DashboardScreen() {
           <ContributionGraph
             logs={state.logsQuery.data}
             activeFilter={state.activeFilter}
+            weeklyPlan={activePlan}
             onTileClick={(date, log) => {
               state.setEditTileDate(date);
               state.setEditTileLog(log);

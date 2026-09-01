@@ -9,6 +9,7 @@ interface ContributionGraphProps {
   logs: GymLog[];
   activeFilter: WorkoutType | 'All';
   onTileClick: (dateStr: string, log?: GymLog) => void;
+  weeklyPlan?: WeeklyPlan;
 }
 
 interface DayTile {
@@ -27,21 +28,9 @@ interface WeekColumn {
   days: DayTile[];
 }
 
-const getTileBgColor = (hours: number, workoutType?: string): string => {
-  if (workoutType && (workoutType.toLowerCase() === 'freeze' || workoutType.toLowerCase() === 'frozen')) {
-    return Colors.iceFrost;
-  }
-  if (workoutType && workoutType.toLowerCase() === 'rest') {
-    return Colors.slateRest;
-  }
-  if (hours <= 0) return '#18181b';
-  if (hours < 0.75) return '#14532d'; // Level 1
-  if (hours < 1.25) return '#166534'; // Level 2
-  if (hours < 2.0) return '#22c55e';  // Level 3
-  return '#00ff88';                  // Level 4 (Peak)
-};
+import { getTileBgColor, getThemeForWorkout } from '@/lib/theme-utils';
 
-export default function ContributionGraph({ logs, activeFilter, onTileClick }: ContributionGraphProps) {
+export default function ContributionGraph({ logs, activeFilter, onTileClick, weeklyPlan }: ContributionGraphProps) {
   const [timeframe, setTimeframe] = useState<TimeframeView>('year');
 
   const yearScrollRef = useRef<ScrollView>(null);
@@ -313,7 +302,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
               <View key={week.weekIndex} style={{ gap: 4 }}>
                 {week.days.map((day) => {
                   const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-                  const tileColor = getTileBgColor(day.hours, day.workoutType);
+                  const tileColor = getTileBgColor(day.hours, day.workoutType, weeklyPlan);
 
                   return (
                     <TouchableOpacity
@@ -372,7 +361,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
 
               {monthData.days.map((day) => {
                 const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-                const tileColor = getTileBgColor(day.hours, day.workoutType);
+                const tileColor = getTileBgColor(day.hours, day.workoutType, weeklyPlan);
 
                 return (
                   <TouchableOpacity
@@ -430,7 +419,7 @@ export default function ContributionGraph({ logs, activeFilter, onTileClick }: C
           {weekData.days.map((day) => {
             const dayName = day.dateObj.toLocaleDateString('en-US', { weekday: 'short' });
             const isFilteredOut = activeFilter !== 'All' && day.hours > 0 && day.workoutType !== activeFilter;
-            const tileColor = getTileBgColor(day.hours, day.workoutType);
+            const tileColor = getTileBgColor(day.hours, day.workoutType, weeklyPlan);
             const isToday = day.isToday;
 
             return (
