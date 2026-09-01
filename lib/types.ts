@@ -26,11 +26,16 @@ export interface CheckinSnoozeStatus {
 }
 
 export interface User {
+  id?: string;
   email: string;
   name: string;
   avatarUrl?: string;
   provider: 'email' | 'google';
-  weeklyPlan?: WeeklyPlan;
+  role?: string;
+}
+
+export interface DashboardState {
+  plan?: WeeklyPlan;
   queuedWeeklyPlanId?: string | null;
   streak?: UserStreak;
   checkinSnooze?: CheckinSnoozeStatus;
@@ -72,9 +77,13 @@ export interface CycleInfo {
 
 export interface StreakBrokenEvent {
   previous_streak: number;
+  last_streak_date?: string;
   broken_on: string;
+  missed_days_count?: number;
+  required_shields?: number;
   restore_shield_available: boolean;
   restore_shields_count: number;
+  missed_dates?: string[];
   can_restore_until: string;
 }
 
@@ -160,9 +169,13 @@ export interface RawStreakResponse {
   isFrozen?: boolean;
   streak_broken_event?: {
     previous_streak: number;
+    last_streak_date?: string;
     broken_on: string;
+    missed_days_count?: number;
+    required_shields?: number;
     restore_shield_available: boolean;
     restore_shields_count: number;
+    missed_dates?: string[];
     can_restore_until: string;
   };
   streak_warning_event?: {
@@ -204,9 +217,13 @@ export interface RawStatsResponse {
   isFrozen?: boolean;
   streak_broken_event?: {
     previous_streak: number;
+    last_streak_date?: string;
     broken_on: string;
+    missed_days_count?: number;
+    required_shields?: number;
     restore_shield_available: boolean;
     restore_shields_count: number;
+    missed_dates?: string[];
     can_restore_until: string;
   };
   streak_warning_event?: {
@@ -219,29 +236,22 @@ export interface RawStatsResponse {
 
 export interface RawAuthMeResponse {
   user?: {
+    id?: string;
     email?: string;
     name?: string;
     avatar_url?: string;
     avatarUrl?: string;
     provider?: 'email' | 'google';
-    weeklyPlan?: WeeklyPlan;
-    weekly_plan_id?: string;
-    queued_weekly_plan_id?: string | null;
-    queuedWeeklyPlanId?: string | null;
+    role?: string;
     timezone?: string;
   };
-  plan?: WeeklyPlan;
-  streak?: RawStreakResponse;
-  checkin_snooze?: CheckinSnoozeStatus;
+  role?: string;
+  id?: string;
   email?: string;
   name?: string;
   avatar_url?: string;
   avatarUrl?: string;
   provider?: 'email' | 'google';
-  weeklyPlan?: WeeklyPlan;
-  weekly_plan_id?: string;
-  queued_weekly_plan_id?: string | null;
-  queuedWeeklyPlanId?: string | null;
 }
 
 export type TimeframeView = 'year' | 'month' | 'week';

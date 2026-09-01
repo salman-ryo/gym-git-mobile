@@ -20,7 +20,9 @@ export interface UnfreezeResult {
 
 export interface RestoreResult {
   success: boolean;
-  restored_date: string;
+  restored_date?: string;
+  restored_dates?: string[];
+  shields_consumed?: number;
   new_current_streak: number;
   shields_remaining: number;
   message: string;
@@ -47,15 +49,17 @@ export async function unfreezeStreak(): Promise<UnfreezeResult> {
 }
 
 /**
- * Consumes 1 Restore Shield to revive streak from a missed date.
+ * Consumes Restore Shield(s) to revive streak from missed date(s).
  */
 export async function restoreStreak(
-  targetDate: string,
+  targetDates: string | string[],
   workoutType?: string,
   hours?: number
 ): Promise<RestoreResult> {
+  const dates = Array.isArray(targetDates) ? targetDates : [targetDates];
   return api.post<RestoreResult>('/streak/restore', {
-    target_date: targetDate,
+    target_dates: dates,
+    target_date: dates[0],
     workout_type: workoutType,
     hours,
   });

@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 interface CycleProgressCardProps {
   stats: Stats;
   user?: User | null;
+  queuedWeeklyPlanId?: string | null;
 }
 
 function formatDate(dateStr: string): string {
@@ -21,7 +22,7 @@ function formatDate(dateStr: string): string {
   return `${monthNames[monthIdx] || ''} ${day}`;
 }
 
-export default function CycleProgressCard({ stats, user }: CycleProgressCardProps) {
+export default function CycleProgressCard({ stats, user, queuedWeeklyPlanId }: CycleProgressCardProps) {
   const cycle = stats.cycleInfo;
   if (!cycle) return null;
 
@@ -170,7 +171,7 @@ export default function CycleProgressCard({ stats, user }: CycleProgressCardProp
       </View>
 
       {/* ── Queued Plan Banner ── */}
-      {user?.queuedWeeklyPlanId && (
+      {queuedWeeklyPlanId && (
         <View style={styles.queuedPlanBanner}>
           <View style={styles.queuedIconContainer}>
             <AlertTriangle size={14} color={Colors.neonPurple} />
@@ -178,7 +179,7 @@ export default function CycleProgressCard({ stats, user }: CycleProgressCardProp
           <View style={{ flex: 1 }}>
             <Text style={styles.queuedTitle}>PLAN UPDATE QUEUED</Text>
             <Text style={styles.queuedText}>
-              Your new plan [<Text style={{ color: '#fff', fontWeight: '800' }}>{user.queuedWeeklyPlanId}</Text>] will start next cycle.
+              Your new plan [<Text style={{ color: '#fff', fontWeight: '800' }}>{queuedWeeklyPlanId}</Text>] will start next cycle.
             </Text>
           </View>
         </View>

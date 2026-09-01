@@ -9,7 +9,6 @@ WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextType {
   user: User | null;
-  streak: UserStreak | null;
   loading: boolean;
   login: (email: string, pass: string, plan?: WeeklyPlan) => Promise<void>;
   signup: (email: string, pass: string, name?: string, plan?: WeeklyPlan) => Promise<void>;
@@ -29,66 +28,14 @@ function mapBackendUser(data: RawAuthMeResponse): User {
   }
 
   const u = data.user || data;
-  const p = data.plan || u.weeklyPlan;
-
-  let streakObj: UserStreak | undefined;
-  if (data.streak) {
-    const s = data.streak;
-    streakObj = {
-      currentStreak: s.current_streak ?? s.currentStreak ?? 0,
-      longestStreak: s.longest_streak ?? s.longestStreak ?? 0,
-      complianceRate: s.compliance_rate ?? s.complianceRate ?? 0,
-      cycleInfo: s.cycle_info ? {
-        cycle_start_date: s.cycle_info.cycle_start_date,
-        cycle_end_date: s.cycle_info.cycle_end_date,
-        workouts_completed_in_cycle: s.cycle_info.workouts_completed_in_cycle,
-        workouts_target_in_cycle: s.cycle_info.workouts_target_in_cycle,
-        rest_tokens_total: s.cycle_info.rest_tokens_total,
-        rest_tokens_used: s.cycle_info.rest_tokens_used,
-        rest_tokens_remaining: s.cycle_info.rest_tokens_remaining,
-        days_remaining_in_cycle: s.cycle_info.days_remaining_in_cycle,
-      } : undefined,
-      accuracyScore: s.accuracy_score ?? s.accuracyScore ?? 0,
-      isFrozen: s.is_frozen ?? s.isFrozen ?? false,
-      streakBrokenEvent: s.streak_broken_event ? {
-        previous_streak: s.streak_broken_event.previous_streak,
-        broken_on: s.streak_broken_event.broken_on,
-        restore_shield_available: s.streak_broken_event.restore_shield_available,
-        restore_shields_count: s.streak_broken_event.restore_shields_count,
-        can_restore_until: s.streak_broken_event.can_restore_until,
-      } : null,
-      streakWarningEvent: s.streak_warning_event ? {
-        is_at_risk: s.streak_warning_event.is_at_risk,
-        hours_remaining: s.streak_warning_event.hours_remaining,
-        rest_tokens_left: s.streak_warning_event.rest_tokens_left,
-        message: s.streak_warning_event.message,
-      } : null,
-    };
-  }
 
   return {
+    id: u.id || (data as Record<string, unknown>).id as string | undefined,
     email: u.email || '',
     name: u.name || (u.email ? u.email.split('@')[0] : 'Gymbro'),
     avatarUrl: u.avatar_url || u.avatarUrl,
     provider: u.provider || 'email',
-    weeklyPlan: p
-      ? {
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          categories: p.categories || [],
-          daysPerWeek: p.daysPerWeek,
-          schedule: p.schedule,
-        }
-      : undefined,
-    queuedWeeklyPlanId: u.queued_weekly_plan_id || u.queuedWeeklyPlanId || null,
-    streak: streakObj,
-    checkinSnooze: data.checkin_snooze ? {
-      date: data.checkin_snooze.date,
-      snoozed_at: data.checkin_snooze.snoozed_at,
-      is_snoozed: data.checkin_snooze.is_snoozed,
-      remaining_seconds: data.checkin_snooze.remaining_seconds,
-    } : undefined,
+    role: u.role || data.role || (data as Record<string, unknown>).role as string | undefined || 'user',
   };
 }
 
@@ -96,7 +43,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [streak, setStreak] = useState<UserStreak | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const bootstrapBackend = async (
@@ -110,7 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     if (!token) {
       setUser(null);
-      setStreak(null);
       return null;
     }
 
@@ -122,16 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         { token }
       );
 
-      // 2. Fetch User Profile, Streak & Active Plan
+      // 2. Fetch User Profile
       const rawProfileData = await api.get<RawAuthMeResponse>('/auth/me', { token });
       const mappedUser = mapBackendUser(rawProfileData);
       setUser(mappedUser);
-      setStreak(mappedUser.streak || null);
       return mappedUser;
     } catch (err) {
       console.error('[Bootstrap Failed]', err);
       setUser(null);
-      setStreak(null);
       return null;
     }
   };
@@ -157,7 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await bootstrapBackend(undefined, session.access_token);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
-        setStreak(null);
       }
     });
 
@@ -219,7 +161,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await api.post('/auth/logout');
       } catch {}
       setUser(null);
-      setStreak(null);
     } finally {
       setLoading(false);
     }
@@ -235,16 +176,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       payload.days_per_week = plan.daysPerWeek;
     }
     await api.put('/auth/plan', payload);
-    if (user) {
-      setUser({ ...user, weeklyPlan: plan });
-    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        streak,
         loading,
         login,
         signup,

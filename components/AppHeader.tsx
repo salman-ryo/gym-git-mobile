@@ -40,6 +40,7 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight ??
 
 interface AppHeaderProps {
   stats?: Stats | null;
+  weeklyPlan?: WeeklyPlan | null;
   onPlanSaved?: () => void;
   onOpenInventory?: () => void;
   inventoryCount?: number;
@@ -47,11 +48,13 @@ interface AppHeaderProps {
 
 export default function AppHeader({
   stats,
+  weeklyPlan,
   onPlanSaved,
   onOpenInventory,
   inventoryCount = 0,
 }: AppHeaderProps) {
   const { user, logout, updateUserPlan } = useAuth();
+  const activePlan = weeklyPlan;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
   const slideAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
@@ -389,7 +392,7 @@ export default function AppHeader({
 
                 {/* ── Workout Plan ─────────────────────── */}
                 <Text style={sectionLabel}>Workout Plan</Text>
-                {user?.weeklyPlan ? (
+                {activePlan ? (
                   <View style={{
                     borderRadius: 16,
                     borderWidth: 1,
@@ -403,17 +406,17 @@ export default function AppHeader({
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                         <CalendarDays size={16} color={Colors.brandPrimary} />
                         <Text style={{ color: Colors.dark.foreground, fontWeight: '800', fontSize: 14, flex: 1 }}>
-                          {user.weeklyPlan.name}
+                          {activePlan.name}
                         </Text>
                       </View>
-                      {user.weeklyPlan.description && (
+                      {activePlan.description && (
                         <Text style={{ color: Colors.dark.mutedForeground, fontSize: 11, marginBottom: 10 }}>
-                          {user.weeklyPlan.description}
+                          {activePlan.description}
                         </Text>
                       )}
                       {/* Category chips */}
                       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
-                        {user.weeklyPlan.categories.map((cat) => (
+                        {activePlan.categories.map((cat) => (
                           <View
                             key={cat}
                             style={{
@@ -591,7 +594,7 @@ export default function AppHeader({
       {/* ── Plan Modal (mounted outside drawer so it can outlive it) ── */}
       <WeeklyPlanModal
         isOpen={planModalOpen}
-        currentPlan={user?.weeklyPlan}
+        currentPlan={activePlan || undefined}
         onSavePlan={handlePlanSaved}
         onClose={() => setPlanModalOpen(false)}
       />

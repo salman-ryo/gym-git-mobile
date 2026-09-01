@@ -75,11 +75,89 @@ export async function deleteGymLog(date: string): Promise<void> {
   await api.delete(`/logs/${date}`);
 }
 
-export async function fetchDashboardStats(_userPlan?: WeeklyPlan): Promise<Stats> {
+export async function fetchDashboardStateAPI(): Promise<import('./types').DashboardState | null> {
+  try {
+    const data = await api.get<any>('/auth/state');
+    if (!data) return null;
+
+    let streakObj: import('./types').UserStreak | undefined;
+    if (data.streak) {
+      const s = data.streak;
+      streakObj = {
+        currentStreak: s.current_streak ?? s.currentStreak ?? 0,
+        longestStreak: s.longest_streak ?? s.longestStreak ?? 0,
+        complianceRate: s.compliance_rate ?? s.complianceRate ?? 0,
+        cycleInfo: s.cycle_info ? {
+          cycle_start_date: s.cycle_info.cycle_start_date,
+          cycle_end_date: s.cycle_info.cycle_end_date,
+          workouts_completed_in_cycle: s.cycle_info.workouts_completed_in_cycle,
+          workouts_target_in_cycle: s.cycle_info.workouts_target_in_cycle,
+          rest_tokens_total: s.cycle_info.rest_tokens_total,
+          rest_tokens_used: s.cycle_info.rest_tokens_used,
+          rest_tokens_remaining: s.cycle_info.rest_tokens_remaining,
+          days_remaining_in_cycle: s.cycle_info.days_remaining_in_cycle,
+        } : undefined,
+        accuracyScore: s.accuracy_score ?? s.accuracyScore ?? 0,
+        isFrozen: s.is_frozen ?? s.isFrozen ?? false,
+        streakBrokenEvent: s.streak_broken_event ? {
+          previous_streak: s.streak_broken_event.previous_streak,
+          last_streak_date: s.streak_broken_event.last_streak_date,
+          broken_on: s.streak_broken_event.broken_on,
+          missed_days_count: s.streak_broken_event.missed_days_count,
+          required_shields: s.streak_broken_event.required_shields,
+          restore_shield_available: s.streak_broken_event.restore_shield_available,
+          restore_shields_count: s.streak_broken_event.restore_shields_count,
+          missed_dates: s.streak_broken_event.missed_dates,
+          can_restore_until: s.streak_broken_event.can_restore_until,
+        } : null,
+        streakWarningEvent: s.streak_warning_event ? {
+          is_at_risk: s.streak_warning_event.is_at_risk,
+          hours_remaining: s.streak_warning_event.hours_remaining,
+          rest_tokens_left: s.streak_warning_event.rest_tokens_left,
+          message: s.streak_warning_event.message,
+        } : null,
+      };
+    }
+
+    const p = data.plan;
+
+    return {
+      plan: p ? {
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        categories: p.categories || [],
+      } : undefined,
+      queuedWeeklyPlanId: data.queued_weekly_plan_id || data.queuedWeeklyPlanId || null,
+      streak: streakObj,
+      checkinSnooze: data.checkin_snooze ? {
+        date: data.checkin_snooze.date,
+        snoozed_at: data.checkin_snooze.snoozed_at,
+        is_snoozed: data.checkin_snooze.is_snoozed,
+        remaining_seconds: data.checkin_snooze.remaining_seconds,
+      } : undefined,
+    };
+  } catch (err) {
+    console.error('Failed to fetch dashboard state', err);
+    return null;
+  }
+}
+
+export async function updateUserPlanAPI(plan: import('./types').WeeklyPlan): Promise<void> {
+  const payload: Record<string, unknown> = { plan_id: plan.id };
+  if (plan.id === 'custom-plan') {
+    payload.name = plan.name;
+    payload.description = plan.description;
+    payload.categories = plan.categories;
+  }
+  await api.put('/auth/plan', payload);
+}
+
+export async function fetchDashboardStats(_userPlan?: WeeklyPlan, existingLogs?: GymLog[]): Promise<Stats> {
   const [rawStats, rawStreak, logs] = await Promise.all([
     api.get<RawStatsResponse>('/stats').catch(() => null),
     api.get<RawStreakResponse>('/streak').catch(() => null),
-    fetchGymLogs().catch(() => []),
+    existingLogs !== undefined ? Promise.resolve(existingLogs) : fetchGymLogs().catch(() => []),
   ]);
 
   let oldestDate = new Date();
@@ -168,9 +246,13 @@ export async function fetchDashboardStats(_userPlan?: WeeklyPlan): Promise<Stats
 
   const streakBrokenEvent = streakObj.streak_broken_event ? {
     previous_streak: streakObj.streak_broken_event.previous_streak,
+    last_streak_date: streakObj.streak_broken_event.last_streak_date,
     broken_on: streakObj.streak_broken_event.broken_on,
+    missed_days_count: streakObj.streak_broken_event.missed_days_count,
+    required_shields: streakObj.streak_broken_event.required_shields,
     restore_shield_available: streakObj.streak_broken_event.restore_shield_available,
     restore_shields_count: streakObj.streak_broken_event.restore_shields_count,
+    missed_dates: streakObj.streak_broken_event.missed_dates,
     can_restore_until: streakObj.streak_broken_event.can_restore_until,
   } : null;
 
@@ -220,9 +302,13 @@ export async function fetchStreakLifecycle(): Promise<UserStreak> {
     isFrozen: s.is_frozen ?? s.isFrozen ?? false,
     streakBrokenEvent: s.streak_broken_event ? {
       previous_streak: s.streak_broken_event.previous_streak,
+      last_streak_date: s.streak_broken_event.last_streak_date,
       broken_on: s.streak_broken_event.broken_on,
+      missed_days_count: s.streak_broken_event.missed_days_count,
+      required_shields: s.streak_broken_event.required_shields,
       restore_shield_available: s.streak_broken_event.restore_shield_available,
       restore_shields_count: s.streak_broken_event.restore_shields_count,
+      missed_dates: s.streak_broken_event.missed_dates,
       can_restore_until: s.streak_broken_event.can_restore_until,
     } : null,
     streakWarningEvent: s.streak_warning_event ? {

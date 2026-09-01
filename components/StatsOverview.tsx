@@ -9,9 +9,10 @@ import CycleProgressCard from './CycleProgressCard';
 interface StatsOverviewProps {
   stats: Stats | null;
   user?: User | null;
+  queuedWeeklyPlanId?: string | null;
 }
 
-export default function StatsOverview({ stats, user }: StatsOverviewProps) {
+export default function StatsOverview({ stats, user, queuedWeeklyPlanId }: StatsOverviewProps) {
   if (!stats) return null;
   const streak = stats.scientificStreak;
   const isFrozen = !!stats.isFrozen;
@@ -194,7 +195,7 @@ export default function StatsOverview({ stats, user }: StatsOverviewProps) {
       </View>
 
       {/* ── 7-Day Cycle Progress Card ── */}
-      {stats.cycleInfo && <CycleProgressCard stats={stats} user={user} />}
+      {stats.cycleInfo && <CycleProgressCard stats={stats} user={user} queuedWeeklyPlanId={queuedWeeklyPlanId} />}
     </View>
   );
 }
